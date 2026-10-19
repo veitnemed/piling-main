@@ -1,0 +1,8 @@
+{
+    "pylint.ignorePatterns": [
+        "**/*.ipynb"
+    ],
+    "pylint.args": [
+        "--disable=invalid-name,trailing-whitespace,missing-module-docstring,missing-function-docstring,redefined-outer-name"
+    ]
+}
