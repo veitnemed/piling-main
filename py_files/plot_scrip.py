@@ -48,11 +48,7 @@ def plot_variance_vs_param(
     y_size: str = r", рад$^2$",
     save_path: str | Path | None = None,
 ):
-    """Plot estimation variance and optionally save a sharp PNG.
-
-    ``ylim=None`` selects a readable vertical range from the data. An explicit
-    ``ylim`` is respected for comparisons with a fixed scale.
-    """
+   
     if parametr_name not in XLABELS_DICT:
         raise ValueError(f"Неизвестный параметр: {parametr_name}")
     if not dict_values:

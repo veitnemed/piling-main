@@ -27,9 +27,11 @@ def single_est(config_params: dict,
     est = get_est_phi(config_params["phis"], Energy_values)
     return est
 
+
 def single_error(est, target_phi):
     """Считаем ошибку оценки по одной ревлизации шума"""
     return (est - target_phi + np.pi)%(2*np.pi) - np.pi
+
 
 def list_errors(config_params: dict,
                 energy_func: Callable) -> float:
