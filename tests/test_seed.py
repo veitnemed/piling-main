@@ -1,7 +1,7 @@
 import py_files.config as cfg
-from py_files.functions import (get_avp_signals, get_sin_signal, get_cap_values, get_barlet_values, calculate_energy)
+from py_files.functions import (get_avp_signals, get_sin_signal, get_cap_values, get_barlet_values, calculate_energy, get_impulse_signal)
 import numpy as np
-from py_files.experiment_stats import (var_vs_params, )
+from py_files.experiment_stats import (var_vs_params)
 
 def test_some_avp_signals():
     config_parametrs = cfg.init_rng(42)
@@ -31,11 +31,13 @@ def test_full_experiment():
     config_parametrs2["realisation_count"] = 3
     var_barlett_vs_snr1 = var_vs_params(config_params=config_parametrs1,
                                    energy_func=get_barlet_values,
+                                   signal_func= get_sin_signal,
                                    parametr_name = "snr",
                                    parametr_values = cfg.SNR_VALUES,
                                    )
     var_barlett_vs_snr2 = var_vs_params(config_params=config_parametrs2,
                                        energy_func=get_barlet_values,
+                                       signal_func = get_sin_signal,
                                        parametr_name = "snr",
                                        parametr_values = cfg.SNR_VALUES,
                                        )

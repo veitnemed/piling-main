@@ -35,18 +35,15 @@ def get_tau_array(config_parametrs: dict) -> np.ndarray:
     
     return (config_parametrs["R"]/config_parametrs["c"])*np.cos(config_parametrs["target_phi"] - get_gamma_array(config_parametrs["M"]))
 
-def get_impulse_signal(time_vector: np.ndarray, 
-                    tau: float,
-                    A: float = 1.0) -> np.ndarray:
+def get_impulse_signal(config_params) -> np.ndarray:
+    """Тут используется приблтжение чтобы у функций был один"""
+    tau = config_params["duration_pulse"]
+    return config_params["A"]*tau / (tau**2 + (config_params["time_vector"]-config_params["center_pulse"])**2)
     
-    return A*tau / (tau**2 + time_vector**2)
-    
-def get_sin_signal(time_vector: np.ndarray, 
-                    f: float,
-                    A: float = 1.0,) -> np.ndarray:
+def get_sin_signal(config_params) -> np.ndarray:
     """Считаем значение гармончиеского сигнала в каждый момент времени"""
     
-    return  A*np.sin(time_vector*(2*np.pi*f))
+    return  config_params["A"]*np.sin(config_params["time_vector"]*(2*np.pi*config_params["f0"]))
 
 
 
@@ -68,15 +65,17 @@ def get_avp_signals(p_t: np.ndarray,
     return {"y0": y0,"y1": y1,"y2": y2}
 
 def get_channel_matrix(config_params: dict,
-                       tau_array: np.ndarray) -> np.ndarray:
+                       tau_array: np.ndarray,
+                       signal_func) -> np.ndarray:
     """Функция возращает матрицу 3M x N со значениями для каждого из трёх каналов датчика АВП"""
-    
-    channel_matrix = np.zeros((3*config_params["M"], config_params["N"])) # Создаём нулевую матрицу размера M x N
-    t = config_params["time_vector"]
+    config_params0 = config_params.copy()
+    channel_matrix = np.zeros((3*config_params0["M"], config_params0["N"])) # Создаём нулевую матрицу размера M x N
+    t = config_params0["time_vector"]
     for idx, tau in enumerate(tau_array):
-        p_t = get_sin_signal(t - tau, config_params["f0"], config_params["A"])
-        energy_signal = calculate_energy(p_t, t)
-        signals = get_avp_signals(p_t, config_params, energy_signal)
+        config_params0["time_vector"] = config_params0["time_vector"] - tau
+        p_t = signal_func(config_params0)
+        energy_signal = calculate_energy(p_t, config_params0["time_vector"])
+        signals = get_avp_signals(p_t, config_params0, energy_signal)
 
     
         sensor_matrix = np.vstack((signals["y0"], signals["y1"], signals["y2"])) 
