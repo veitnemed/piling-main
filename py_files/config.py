@@ -8,6 +8,7 @@ fs = 8800 # ЧАСТОТА ДИСКРЕТИЗАЦИИ
 dt = 1/fs # ШАГ ДИСКРЕТИЗАЦИИ
 N = 10000 # КОЛИЧЕСТВО ТОЧЕК 
 t = np.arange(N)*dt #ВЕКТОР ВРЕМЕНИ
+T = N*dt # окно наблюдения 
 
 delta_phi = 0.001 # Шаг поиска угла 0.0003
 N_phi = int(2*np.pi/delta_phi) # Количество значений угла 
@@ -75,12 +76,13 @@ def init_rng(main_seed: int = GLOBAL_SEED):
     """Инциализация стартового конфига"""
     parametrs = CONFIG_PARAMETRS.copy()
     parametrs["main_rng"] = np.random.default_rng(main_seed)
+    parametrs["main_seed"] = main_seed
     return parametrs
 
 def update_config():
     parametrs = CONFIG_PARAMETRS.copy()
     """Отдельная функция, чтобы случайно не передать в init_rng значенеи seed"""
-    if "main_rng" not in CONFIG_PARAMETRS:
+    if "main_rng" not in parametrs:
         raise KeyError(f"Rng не иницализирован")
-    return CONFIG_PARAMETRS
+    return parametrs
     

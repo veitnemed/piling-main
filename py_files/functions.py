@@ -3,7 +3,9 @@ from numpy.random import Generator
 from . import config as cfg
 
 
-
+def calculate_energy(signal: np.ndarray, time_vector: np.ndarray, dt):
+    """Рассчёт энергии сигнала """
+    return np.trapezoid(y = signal**2, x = time_vector, dx = dt)
 
 def get_gamma_array(M: int) -> np.ndarray:
     """Рассчет углов датчиков относительно оси x
