@@ -73,12 +73,14 @@ CONFIG_PARAMETRS = {"snr": SNR,
 
 def init_rng(main_seed: int = GLOBAL_SEED):
     """Инциализация стартового конфига"""
-    CONFIG_PARAMETRS["main_rng"] = np.random.default_rng(main_seed)
-    return CONFIG_PARAMETRS
+    parametrs = CONFIG_PARAMETRS.copy()
+    parametrs["main_rng"] = np.random.default_rng(main_seed)
+    return parametrs
 
 def update_config():
+    parametrs = CONFIG_PARAMETRS.copy()
     """Отдельная функция, чтобы случайно не передать в init_rng значенеи seed"""
-    if CONFIG_PARAMETRS not in "main_rng":
+    if "main_rng" not in CONFIG_PARAMETRS:
         raise KeyError(f"Rng не иницализирован")
     return CONFIG_PARAMETRS
     
