@@ -1,7 +1,8 @@
 import numpy as np
 
-main_seed = None
-main_rng = np.random.default_rng(main_seed)
+GLOBAL_SEED = 10
+
+
 # ПАРАМЕТРЫ МОДЕЛИ 
 fs = 8800 # ЧАСТОТА ДИСКРЕТИЗАЦИИ
 dt = 1/fs # ШАГ ДИСКРЕТИЗАЦИИ
@@ -29,7 +30,7 @@ R1 = 1
 
 # Параметры шумы
 
-REALESATION_COUNT = 250
+REALISATION_COUNT = 2
 
 # ПАРАМЕТРЫ ЭКСПЕРИМЕНТА 
 
@@ -62,9 +63,22 @@ CONFIG_PARAMETRS = {"snr": SNR,
         "f0": f,
         "A": A,
         "c": c,
-        "K": REALESATION_COUNT,
+        "K": REALISATION_COUNT,
         "target_phi": TARGET_PHI,
         "alpha": alpha,
         "phis": phi_vector,
-        "main_rng": main_rng}
+        "main_seed": GLOBAL_SEED}
 
+
+
+def init_rng(main_seed: int = GLOBAL_SEED):
+    """Инциализация стартового конфига"""
+    CONFIG_PARAMETRS["main_rng"] = np.random.default_rng(main_seed)
+    return CONFIG_PARAMETRS
+
+def update_config():
+    """Отдельная функция, чтобы случайно не передать в init_rng значенеи seed"""
+    if CONFIG_PARAMETRS not in "main_rng":
+        raise KeyError(f"Rng не иницализирован")
+    return CONFIG_PARAMETRS
+    

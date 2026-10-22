@@ -1,5 +1,9 @@
 import numpy as np
 from numpy.random import Generator
+from . import config as cfg
+
+
+
 
 def get_gamma_array(M: int) -> np.ndarray:
     """Рассчет углов датчиков относительно оси x
@@ -37,13 +41,12 @@ def get_avp_signals(p_t: np.ndarray,
     """Рассчёт значений каналов y0 y1 y2 для АВП"""
     child_seeds = config_parametrs["main_rng"].bit_generator.seed_seq.spawn(3)
     
-    rng1 = np.random.default_rng(child_seeds[0])
-    rng2 = np.random.default_rng(child_seeds[1])
-    rng3 = np.random.default_rng(child_seeds[2])
+    rng = np.random.default_rng(child_seeds[0])
     
-    y0 = p_t + get_noise(config_parametrs, rng1) # size (1 x N)
-    y1 = p_t*np.cos(config_parametrs["target_phi"]) + get_noise(config_parametrs, rng2)
-    y2 = p_t*np.sin(config_parametrs["target_phi"]) + get_noise(config_parametrs, rng3)
+    
+    y0 = p_t + get_noise(config_parametrs, rng) # size (1 x N)
+    y1 = p_t*np.cos(config_parametrs["target_phi"]) + get_noise(config_parametrs, rng)
+    y2 = p_t*np.sin(config_parametrs["target_phi"]) + get_noise(config_parametrs, rng)
         
     return {"y0": y0,"y1": y1,"y2": y2}
 
