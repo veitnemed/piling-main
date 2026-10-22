@@ -8,7 +8,7 @@ fs = 8800 # ЧАСТОТА ДИСКРЕТИЗАЦИИ
 dt = 1/fs # ШАГ ДИСКРЕТИЗАЦИИ
 N = 10000 # КОЛИЧЕСТВО ТОЧЕК 
 t = np.arange(N)*dt #ВЕКТОР ВРЕМЕНИ
-T = N*dt # окно наблюдения 
+T = t[-1] - t[0] # окно наблюдения 
 
 delta_phi = 0.001 # Шаг поиска угла 0.0003
 N_phi = int(2*np.pi/delta_phi) # Количество значений угла 
@@ -83,6 +83,6 @@ def update_config():
     parametrs = CONFIG_PARAMETRS.copy()
     """Отдельная функция, чтобы случайно не передать в init_rng значенеи seed"""
     if "main_rng" not in parametrs:
-        raise KeyError(f"Rng не иницализирован")
+        raise KeyError(f"Rng не иницализирован, сначала вызовоите init_rng")
     return parametrs
     
