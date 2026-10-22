@@ -78,7 +78,7 @@ def plot_variance_vs_param(dict_values: dict,
     if parametr_name != "SNR":
         info += f"SNR: {config_params["snr"]} (С/Ш)\n"   
     info += f"{NAMING_DICT[parametr_name]} от {round(parametr_values[0],2)} до {round(parametr_values[-1],2)} ({len(parametr_values)} точек)\n\n"
-    info +=  f"Кол-во реализаций шума: {config_params["K"]}\n"
+    info +=  f"Кол-во реализаций шума: {config_params["realisation_count"]}\n"
     info +=  f"SEED: {config_params["main_seed"]}\n"
     info += f"Время рассчёта: {round(delta_time,2)} сек."
 

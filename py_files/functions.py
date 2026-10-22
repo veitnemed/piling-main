@@ -3,13 +3,25 @@ from numpy.random import Generator
 from . import config as cfg
 
 
-def calculate_energy(signal: np.ndarray, time_vector: np.ndarray):
-    """Рассчёт энергии сигнала """
+def calculate_energy(signal: np.ndarray, 
+                     time_vector: np.ndarray):
+    """Рассчёт энергии сигнала от 0 до T """
+    
     return np.trapezoid(y = signal**2, x = time_vector)
 
-def calculate_noise_level(energy_signal: np.ndarray, snr: float):
+def calculate_noise_level(energy_signal: np.ndarray, 
+                          snr: float, 
+                          duration_all: np.ndarray):
+    """Рассчёт СКО шума из опредения SNR: отношения энергии сигнала к средней энергии шума"""
+    return np.sqrt(energy_signal/(duration_all*snr))
 
-    return np.sqrt(energy_signal/(T*snr))
+def get_noise(config_parametrs, 
+              rng: Generator,
+              energy_signal: float) -> np.ndarray:
+    """Генрация помех"""
+
+    noise_level = calculate_noise_level(energy_signal, config_parametrs["snr"], config_parametrs["duration_all"])
+    return rng.normal(loc = 0, scale = noise_level, size = config_parametrs["N"])
 
 def get_gamma_array(M: int) -> np.ndarray:
     """Рассчет углов датчиков относительно оси x
@@ -36,37 +48,35 @@ def get_sin_signal(time_vector: np.ndarray,
     
     return  A*np.sin(time_vector*(2*np.pi*f))
 
-def get_noise(config_parametrs, rng: Generator) -> np.ndarray:
-    """Генрация помех"""
 
-    noise_level = config_parametrs["A"]/np.sqrt(config_parametrs["snr"])
-    return rng.normal(loc = 0, scale = noise_level, size = config_parametrs["N"])
 
 def get_avp_signals(p_t: np.ndarray,
-                    config_parametrs) -> dict:
+                    config_parametrs,
+                    energy_signal) -> dict:
     """Рассчёт значений каналов y0 y1 y2 для АВП"""
     child_seeds = config_parametrs["main_rng"].bit_generator.seed_seq.spawn(3)
     
-    rng = np.random.default_rng(child_seeds[0])
+    rng1 = np.random.default_rng(child_seeds[0])
+    rng2 = np.random.default_rng(child_seeds[1])
+    rng3 = np.random.default_rng(child_seeds[2])
     
     
-    y0 = p_t + get_noise(config_parametrs, rng) # size (1 x N)
-    y1 = p_t*np.cos(config_parametrs["target_phi"]) + get_noise(config_parametrs, rng)
-    y2 = p_t*np.sin(config_parametrs["target_phi"]) + get_noise(config_parametrs, rng)
+    y0 = p_t + get_noise(config_parametrs, rng1, energy_signal) # size (1 x N)
+    y1 = p_t*np.cos(config_parametrs["target_phi"]) + get_noise(config_parametrs, rng2, energy_signal)
+    y2 = p_t*np.sin(config_parametrs["target_phi"]) + get_noise(config_parametrs, rng3, energy_signal)
         
     return {"y0": y0,"y1": y1,"y2": y2}
 
 def get_channel_matrix(config_params: dict,
-                       tau_array,
-                       t: np.ndarray, 
-                    ) -> np.ndarray:
+                       tau_array: np.ndarray) -> np.ndarray:
     """Функция возращает матрицу 3M x N со значениями для каждого из трёх каналов датчика АВП"""
     
     channel_matrix = np.zeros((3*config_params["M"], config_params["N"])) # Создаём нулевую матрицу размера M x N
-    
+    t = config_params["time_vector"]
     for idx, tau in enumerate(tau_array):
         p_t = get_sin_signal(t - tau, config_params["f0"], config_params["A"])
-        signals = get_avp_signals(p_t, config_params)
+        energy_signal = calculate_energy(p_t, t)
+        signals = get_avp_signals(p_t, config_params, energy_signal)
 
     
         sensor_matrix = np.vstack((signals["y0"], signals["y1"], signals["y2"])) 

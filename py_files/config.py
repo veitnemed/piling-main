@@ -7,8 +7,8 @@ GLOBAL_SEED = 10
 fs = 8800 # ЧАСТОТА ДИСКРЕТИЗАЦИИ
 dt = 1/fs # ШАГ ДИСКРЕТИЗАЦИИ
 N = 10000 # КОЛИЧЕСТВО ТОЧЕК 
-t = np.arange(N)*dt #ВЕКТОР ВРЕМЕНИ
-T = t[-1] - t[0] # окно наблюдения 
+time_vector = np.arange(N)*dt #ВЕКТОР ВРЕМЕНИ
+DURATION_ALL = time_vector[-1] - time_vector[0] # окно наблюдения 
 
 delta_phi = 0.001 # Шаг поиска угла 0.0003
 N_phi = int(2*np.pi/delta_phi) # Количество значений угла 
@@ -31,7 +31,7 @@ R1 = 1
 
 # Параметры шумы
 
-REALISATION_COUNT = 2
+REALISATION_COUNT = 100
 
 # ПАРАМЕТРЫ ЭКСПЕРИМЕНТА 
 
@@ -59,12 +59,14 @@ PHI_VALUES = np.linspace(0,2*np.pi,10, endpoint = False)
 
 CONFIG_PARAMETRS = {"snr": SNR,
         "M": M,
+        "time_vector": time_vector,
+        "duration_all": DURATION_ALL,
         "N": N,
         "R": R,
         "f0": f,
         "A": A,
         "c": c,
-        "K": REALISATION_COUNT,
+        "realisation_count": REALISATION_COUNT,
         "target_phi": TARGET_PHI,
         "alpha": alpha,
         "phis": phi_vector,
@@ -79,10 +81,9 @@ def init_rng(main_seed: int = GLOBAL_SEED):
     parametrs["main_seed"] = main_seed
     return parametrs
 
-def update_config():
+def restart_rng():
+    """Сброс генератора"""
     parametrs = CONFIG_PARAMETRS.copy()
-    """Отдельная функция, чтобы случайно не передать в init_rng значенеи seed"""
-    if "main_rng" not in parametrs:
-        raise KeyError(f"Rng не иницализирован, сначала вызовоите init_rng")
+    parametrs["main_rng"] = np.random.default_rng(parametrs["main_seed"])
     return parametrs
     

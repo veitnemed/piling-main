@@ -14,16 +14,14 @@ from py_files.functions import (
 
 def single_est(config_params: dict,
                dir_matrix: np.ndarray,
-               energy_func: Callable) -> float:
+               target_func: Callable) -> float:
     """Считаем оценку по одной ревлизации шума"""
     
     tau_array = get_tau_array(config_params)
-    channel_matrix = get_channel_matrix(
-                                        config_params = config_params,
-                                        t = cfg.t, 
+    channel_matrix = get_channel_matrix(config_params = config_params,
                                         tau_array = tau_array)
     W = get_covariation_matrix(channel_matrix, config_params["N"])
-    Energy_values = energy_func(W, dir_matrix)
+    Energy_values = target_func(W, dir_matrix)
     est = get_est_phi(config_params["phis"], Energy_values)
     return est
 
@@ -32,14 +30,13 @@ def single_error(est, target_phi):
     """Считаем ошибку оценки по одной ревлизации шума"""
     return (est - target_phi + np.pi)%(2*np.pi) - np.pi
 
-
 def list_errors(config_params: dict,
                 energy_func: Callable) -> float:
     """Формируем список ошибок для каждой реализации шума"""
     dir_matrix = get_direction_matrix(config_params["phis"], config_params["M"])
     
     return [single_error(single_est(config_params, dir_matrix, energy_func), config_params["target_phi"]) 
-            for _ in range(config_params["K"])]
+            for _ in range(config_params["realisation_count"])]
 
 def calculate_variance(list_errors: list) -> float:
     """Считаем дисперсию по списку ошибок"""
