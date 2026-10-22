@@ -1,6 +1,5 @@
 import numpy as np
 from numpy.random import Generator
-import py_files.config as cfg
 
 def get_gamma_array(M: int) -> np.ndarray:
     """Рассчет углов датчиков относительно оси x
@@ -12,8 +11,14 @@ def get_gamma_array(M: int) -> np.ndarray:
 def get_tau_array(config_parametrs: dict) -> np.ndarray:
     """Рассчёт задержек относительно каждого датчика"""
     
-    return (config_parametrs["R"]/cfg.c)*np.cos(config_parametrs["target_phi"] - get_gamma_array(config_parametrs["M"]))
+    return (config_parametrs["R"]/config_parametrs["c"])*np.cos(config_parametrs["target_phi"] - get_gamma_array(config_parametrs["M"]))
 
+def get_impulse_signal(time_vector: np.ndarray, 
+                    tau: float,
+                    A: float = 1.0) -> np.ndarray:
+    
+    return A*tau / (tau**2 + time_vector**2)
+    
 def get_sin_signal(time_vector: np.ndarray, 
                     f: float,
                     A: float = 1.0,) -> np.ndarray:
@@ -21,26 +26,24 @@ def get_sin_signal(time_vector: np.ndarray,
     
     return  A*np.sin(time_vector*(2*np.pi*f))
 
-def get_noise(snr: float, rng: Generator) -> np.ndarray:
+def get_noise(config_parametrs, rng: Generator) -> np.ndarray:
     """Генрация помех"""
 
-    noise_level = cfg.A/np.sqrt(snr)
-    return rng.normal(loc = 0, scale = noise_level, size = cfg.N)
+    noise_level = config_parametrs["A"]/np.sqrt(config_parametrs["snr"])
+    return rng.normal(loc = 0, scale = noise_level, size = config_parametrs["N"])
 
 def get_avp_signals(p_t: np.ndarray,
-                    phi_0: float,
-                    snr: float,
-                    main_rng: Generator) -> dict:
+                    config_parametrs) -> dict:
     """Рассчёт значений каналов y0 y1 y2 для АВП"""
-    child_seeds = main_rng.bit_generator.seed_seq.spawn(3)
+    child_seeds = config_parametrs["main_rng"].bit_generator.seed_seq.spawn(3)
     
     rng1 = np.random.default_rng(child_seeds[0])
     rng2 = np.random.default_rng(child_seeds[1])
     rng3 = np.random.default_rng(child_seeds[2])
     
-    y0 = p_t + get_noise(snr, rng1) # size (1 x N)
-    y1 = p_t*np.cos(phi_0) + get_noise(snr, rng2)
-    y2 = p_t*np.sin(phi_0) + get_noise(snr, rng3)
+    y0 = p_t + get_noise(config_parametrs, rng1) # size (1 x N)
+    y1 = p_t*np.cos(config_parametrs["target_phi"]) + get_noise(config_parametrs, rng2)
+    y2 = p_t*np.sin(config_parametrs["target_phi"]) + get_noise(config_parametrs, rng3)
         
     return {"y0": y0,"y1": y1,"y2": y2}
 
@@ -54,7 +57,7 @@ def get_channel_matrix(config_params: dict,
     
     for idx, tau in enumerate(tau_array):
         p_t = get_sin_signal(t - tau, config_params["f0"], config_params["A"])
-        signals = get_avp_signals(p_t, config_params["target_phi"], config_params["snr"], config_params["main_rng"])
+        signals = get_avp_signals(p_t, config_params)
 
     
         sensor_matrix = np.vstack((signals["y0"], signals["y1"], signals["y2"])) 
