@@ -7,10 +7,16 @@ def calculate_freq_spectr(signal, fs):
         fft_centred = np.abs(np.fft.fftshift(fft_values))
     
         return fft_centred
-def calculate_B(freq_vector, freq_signal):
-    mask = freq_vector >=0
-    energy_spectrum = freq_signal[mask]**2
-    return np.trapezoid(energy_spectrum, freq_vector[mask]) / energy_spectrum.max()
+def calculate_99(freq_vector, freq_signal):
+    
+    power = freq_signal**2
+    order = np.argsort(np.abs(freq_vector))
+
+    energy_1 = np.cumsum(power[order])
+    energy_1  /= energy_1[-1]
+    idx = np.searchsorted(energy_1, 0.99)
+    res = np.abs(freq[order[idx]])
+    return res
 def calculate_energy(signal: np.ndarray, 
                      time_vector: np.ndarray):
     """Рассчёт энергии сигнала от 0 до T """

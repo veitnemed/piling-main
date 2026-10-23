@@ -31,7 +31,7 @@ XLABELS_DICT = {
     "M": "M (кол-во датчиков), шт",
     "R": "R (радиус решётки АВП), м",
     "alpha": r"$\alpha = \frac{\lambda}{2R} $",
-    "phis": r"$\varphi_0, рад$"
+    "phis": r"$\varphi_0, град$"
     
 }
 NAMING_DICT = {
@@ -48,15 +48,17 @@ def plot_variance_vs_param(dict_values: dict,
                            parametr_values: np.ndarray | list,
                            delta_time : float = 0,
                            y_label: str = r"$s_{\varepsilon}^{2}$",
-                           y_size: str = r", $рад^2$"
+                           y_size: str = r", $град^2$"
                            ):
     """Функция строит график зависимости дисперсии оценки от параметра моделирования
     для нескольких методов"""
     
     fig, ax = plt.subplots(1, 1, figsize=(14, 11))
     fig.subplots_adjust(top=0.88, bottom=0.45)
+    if parametr_name == "phis":
+        parametr_values = np.degrees(parametr_values)
     for idx, (method, values) in enumerate(dict_values.items()):
-        ax.plot(parametr_values, values, color = COLORS[idx % len(COLORS)], label =  method, linestyle = LINES[idx % len(LINES)], linewidth = 3)
+        ax.plot(parametr_values, np.asarray(values) * (180 / np.pi)**2, color = COLORS[idx % len(COLORS)], label =  method, linestyle = LINES[idx % len(LINES)], linewidth = 3)
 
     ax.set_xlabel(XLABELS_DICT[parametr_name], fontsize=18)
     ax.set_ylabel(y_label+y_size, fontsize=18)
@@ -65,7 +67,10 @@ def plot_variance_vs_param(dict_values: dict,
         y=0.94, va="center", fontfamily="Times New Roman", fontsize=22
     )
     ax.grid(True)
-    ax.set_ylim(ylim)
+    ax.set_ylim([
+    value * (180 / np.pi)**2 if value is not None else None
+    for value in ylim
+])
     ax.legend(fontsize=15)
     # Параметры под графиком
     methods = ", ".join(dict_values)

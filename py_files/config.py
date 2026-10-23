@@ -41,7 +41,7 @@ SENSOR_VALUES = [1, 5, 7, 10, 12, 15, 17, 20]
 SNR_VALUES = np.linspace(0.5, 10, 10)
 NOISE_LEVEL_VALUES = A/np.sqrt(SNR_VALUES)
 ALPHA_VALUES_2 = np.arange(0,1, 0.01)
-ALPHA_VALUES_1 = np.arange(1,10,1)
+ALPHA_VALUES_1 = np.arange(10,20,1)
 RADIUS_VALUES = np.linspace(0,1, 10, 10)
 
 
