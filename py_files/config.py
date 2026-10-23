@@ -1,79 +1,78 @@
 import numpy as np
 
-GLOBAL_SEED = 10
 
+
+GLOBAL_SEED = 10
+SPEED_ON_SOUND = 343.26 # СКОРОСТЬ ЗВУКА
+FS = 8800 # ЧАСТОТА ДИСКРЕТИЗАЦИИ
+DT = 1/FS # ШАГ ДИСКРЕТИЗАЦИИ
 
 # ПАРАМЕТРЫ МОДЕЛИ 
-fs = 8800 # ЧАСТОТА ДИСКРЕТИЗАЦИИ
-dt = 1/fs # ШАГ ДИСКРЕТИЗАЦИИ
 N = 10000 # КОЛИЧЕСТВО ТОЧЕК 
-time_vector = np.arange(N)*dt #ВЕКТОР ВРЕМЕНИ
-DURATION_ALL = time_vector[-1] - time_vector[0] # окно наблюдения 
-center_pulse = DURATION_ALL/2
-delta_phi = 0.001 # Шаг поиска угла 0.0003
-N_phi = int(2*np.pi/delta_phi) # Количество значений угла 
-phi_vector = np.linspace(0,2*np.pi,N_phi,endpoint= False) # Значения угла от 0 до 2П
+
+TIME_VECTOR = np.arange(N)*DT #ВЕКТОР ВРЕМЕНИ
+DURATION_ALL = TIME_VECTOR[-1] - TIME_VECTOR[0] # ДЛИТЕЛЬНОСТЬ ИМПУЛЬСА
+CENTER_PULSE = DURATION_ALL/2 # Центр импульсного сигнала 
+PHI_STEP = 0.001 # Шаг поиска угла 0.0003
+FREQ_VECTOR = np.fft.fftshift(np.fft.fftfreq(N, d=1/FS))
+N_PHI = int(2*np.pi/PHI_STEP) # Количество значений угла 
+PHI_VECTOR = np.linspace(0, 2*np.pi, N_PHI, endpoint= False) # Значения угла от 0 до 2П
 
 # ПАРАМЕТРЫ АВП
 M = 3 # КОЛИЧЕСТВО ДАТЧИКОВ
-c = 343.26 # СКОРОСТЬ ЗВУКА
+
 
 
 # ПАРАМЕТРЫ СИГНАЛА 
-f = 10 # ЦЕНТРАЛЬНАЯ ЧАСТОТА СИГНАЛА 
+F_GARMONIC = 10 # ЦЕНТРАЛЬНАЯ ЧАСТОТА СИГНАЛА 
 A = 1 # АМПЛИТУДА СИГНАЛА 
-alpha = 10
-R = c / (2*f*alpha)
-TARGET_PHI = np.pi/2 # АЗИМУТ ПОД КОТОРЫМ ПРИХОДИТ ИСГНАЛ (ТО ЧТО ОЦЕНИВАЕМ)
+ALPHA = 10
+R = SPEED_ON_SOUND / (2*F_GARMONIC*ALPHA)
+TARGET_PHI = np.pi/4 # АЗИМУТ ПОД КОТОРЫМ ПРИХОДИТ ИСГНАЛ (ТО ЧТО ОЦЕНИВАЕМ)
 
-f1 = c/(2*R*alpha)
+f1 = SPEED_ON_SOUND/(2*R*ALPHA)
 R1 = 1
 
 # Параметры шумы
-
 REALISATION_COUNT = 100
 
 # ПАРАМЕТРЫ ЭКСПЕРИМЕНТА 
-
 SENSOR_VALUES = [1, 5, 7, 10, 12, 15, 17, 20]
-
 SNR_VALUES = np.linspace(0.5, 10, 10)
 NOISE_LEVEL_VALUES = A/np.sqrt(SNR_VALUES)
-
 ALPHA_VALUES_2 = np.arange(0,1, 0.01)
 ALPHA_VALUES_1 = np.arange(1,10,1)
-R_min = 0.1
-R_max = 10.0
-R_VALUES = np.linspace(R_min, R_max, 10)
+RADIUS_VALUES = np.linspace(0,1, 10, 10)
 
 
 STANDART_DIVIATONS_NOISE = A/np.sqrt(np.array(SNR_VALUES))
 
 SNR = 2
-NOISE_LEVEL = 0.3
 TIME_LIMIT = {"left": 0,
         "right": 0.15}
 
 duration_pulse = 0.05
-PHI_VALUES = np.linspace(0,2*np.pi,200, endpoint = False)
+PHI_VALUES = np.linspace(0,2*np.pi,36, endpoint = False) # Для построения пространства ошибок
 
 CONFIG_PARAMETRS = {"snr": SNR,
         "M": M,
-        "time_vector": time_vector,
+        "time_vector": TIME_VECTOR,
+        "freq_vector": FREQ_VECTOR,
         "duration_all": DURATION_ALL,
         "N": N,
+        "fs": FS,
         "R": R,
-        "f0": f,
+        "f0": F_GARMONIC,
         "A": A,
-        "c": c,
+        "c": SPEED_ON_SOUND,
         "duration_pulse": duration_pulse,
         "realisation_count": REALISATION_COUNT,
         "target_phi": TARGET_PHI,
-        "alpha": alpha,
-        "phis": phi_vector,
+        "alpha": ALPHA,
+        "phis": PHI_VECTOR,
         "main_seed": GLOBAL_SEED,
         "main_rng": np.random.default_rng(GLOBAL_SEED),
-        "center_pulse": center_pulse}
+        "center_pulse": CENTER_PULSE}
 
 
 

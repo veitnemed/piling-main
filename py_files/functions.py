@@ -2,7 +2,15 @@ import numpy as np
 from numpy.random import Generator
 from . import config as cfg
 
-
+def calculate_freq_spectr(signal, fs):
+        fft_values = np.fft.fft(signal)/fs
+        fft_centred = np.abs(np.fft.fftshift(fft_values))
+    
+        return fft_centred
+def calculate_B(freq_vector, freq_signal):
+    mask = freq_vector >=0
+    energy_spectrum = freq_signal[mask]**2
+    return np.trapezoid(energy_spectrum, freq_vector[mask]) / energy_spectrum.max()
 def calculate_energy(signal: np.ndarray, 
                      time_vector: np.ndarray):
     """Рассчёт энергии сигнала от 0 до T """

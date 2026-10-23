@@ -45,44 +45,54 @@ def plot_variance_vs_param(dict_values: dict,
                            config_params: dict,
                            parametr_name: str,
                            ylim: tuple,
-                           parametr_values: dict,
+                           parametr_values: np.ndarray | list,
                            delta_time : float = 0,
                            y_label: str = r"$s_{\varepsilon}^{2}$",
                            y_size: str = r", $рад^2$"
                            ):
     """Функция строит график зависимости дисперсии оценки от параметра моделирования
-    для неескольких методов"""
+    для нескольких методов"""
     
-    _, ax = plt.subplots(1, 1, figsize=(14, 7), constrained_layout=True)
+    fig, ax = plt.subplots(1, 1, figsize=(14, 11))
+    fig.subplots_adjust(top=0.88, bottom=0.45)
     for idx, (method, values) in enumerate(dict_values.items()):
-        ax.plot(parametr_values, values, color = COLORS[idx], label =  method, linestyle = LINES[idx], linewidth = 3)
+        ax.plot(parametr_values, values, color = COLORS[idx % len(COLORS)], label =  method, linestyle = LINES[idx % len(LINES)], linewidth = 3)
 
     ax.set_xlabel(XLABELS_DICT[parametr_name], fontsize=18)
     ax.set_ylabel(y_label+y_size, fontsize=18)
-    ax.set_title("Зависимость " + y_label + f" от {LABELS_DICT[parametr_name]} ", fontsize=24)
+    fig.suptitle(
+        "Зависимость " + y_label + f" от {LABELS_DICT[parametr_name]}",
+        y=0.94, va="center", fontfamily="Times New Roman", fontsize=22
+    )
     ax.grid(True)
     ax.set_ylim(ylim)
     ax.legend(fontsize=15)
-    s = ""
-    for key in list(dict_values.keys()):
-        s += key + " "
-        
-    info = ""
-    
-    info += f"Методы: {s}\n\n"
+    # Параметры под графиком
+    methods = ", ".join(dict_values)
+    info = f"Методы: {methods}\n"
     info += f"Частота сигнала: {config_params['f0']} Гц\n"
     if parametr_name != "R":
-        info += f"Радиус решетки: {round(config_params['R'], 2)} м\n"
+        info += f"Радиус решётки: {config_params['R']:.2f} м\n"
     if parametr_name != "M":
-        info += f"Количество датчиков: {config_params['M']} шт\n"
-    if parametr_name != "SNR":
-        info += f"SNR: {config_params["snr"]} (С/Ш)\n"   
-    info += f"{NAMING_DICT[parametr_name]} от {round(parametr_values[0],2)} до {round(parametr_values[-1],2)} ({len(parametr_values)} точек)\n\n"
-    info +=  f"Кол-во реализаций шума: {config_params["realisation_count"]}\n"
-    info +=  f"SEED: {config_params["main_seed"]}\n"
-    info += f"Время рассчёта: {round(delta_time,2)} сек."
+        info += f"Количество датчиков: {config_params['M']} шт.\n"
+    if parametr_name != "snr":
+        info += f"SNR: {config_params['snr']} (С/Ш)\n"
+    info += (
+        f"{NAMING_DICT[parametr_name]} от {parametr_values[0]:.2f} "
+        f"до {parametr_values[-1]:.2f} ({len(parametr_values)} точек)\n"
+    )
+    info += f"Количество проверенных углов: {len(config_params['phis'])}\n"
+    info += f"Количество реализаций шума: {config_params['realisation_count']}\n"
+    info += f"SEED: {config_params['main_seed']}\n"
+    info += f"Время расчёта: {delta_time:.2f} сек."
 
+    ax.text(
+        0.5, -0.20, info,
+        transform=ax.transAxes,
+        fontsize=14, linespacing=1.5,
+        ha="center", va="top",
+        bbox=dict(boxstyle="round", facecolor="wheat", alpha=1),
+        clip_on=False
+    )
 
-    ax.text(0.7, 0.96, info, transform=ax.transAxes, fontsize=17, verticalalignment='top', bbox=dict(boxstyle='round', facecolor='wheat', alpha=1))
-
-  
+    return fig, ax
