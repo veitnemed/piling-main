@@ -51,6 +51,7 @@ def get_avp_signals(p_t: np.ndarray,
                     config_parametrs,
                     energy_signal) -> dict:
     """Рассчёт значений каналов y0 y1 y2 для АВП"""
+
     child_seeds = config_parametrs["main_rng"].bit_generator.seed_seq.spawn(3)
     
     rng1 = np.random.default_rng(child_seeds[0])
@@ -62,20 +63,24 @@ def get_avp_signals(p_t: np.ndarray,
     y1 = p_t*np.cos(config_parametrs["target_phi"]) + get_noise(config_parametrs, rng2, energy_signal)
     y2 = p_t*np.sin(config_parametrs["target_phi"]) + get_noise(config_parametrs, rng3, energy_signal)
         
-    return {"y0": y0,"y1": y1,"y2": y2}
+    return {"y0": y0, "y1": y1, "y2": y2}
 
 def get_channel_matrix(config_params: dict,
                        tau_array: np.ndarray,
                        signal_func) -> np.ndarray:
     """Функция возращает матрицу 3M x N со значениями для каждого из трёх каналов датчика АВП"""
-    config_params0 = config_params.copy()
-    channel_matrix = np.zeros((3*config_params0["M"], config_params0["N"])) # Создаём нулевую матрицу размера M x N
-    t = config_params0["time_vector"]
+
+    config_params_copy = config_params.copy()
+    channel_matrix = np.zeros((3*config_params_copy["M"], config_params_copy["N"])) # Создаём нулевую матрицу размера M x N
+
     for idx, tau in enumerate(tau_array):
-        config_params0["time_vector"] = config_params0["time_vector"] - tau
-        p_t = signal_func(config_params0)
-        energy_signal = calculate_energy(p_t, config_params0["time_vector"])
-        signals = get_avp_signals(p_t, config_params0, energy_signal)
+        """На каждой итерации для текущей кофигурации присваем параметру time_vector  - исзодный 
+        time минус текущий тау"""
+
+        config_params_copy["time_vector"] = config_params["time_vector"] - tau 
+        p_t = signal_func(config_params_copy)
+        energy_signal = calculate_energy(p_t, config_params_copy["time_vector"])
+        signals = get_avp_signals(p_t, config_params_copy, energy_signal)
 
     
         sensor_matrix = np.vstack((signals["y0"], signals["y1"], signals["y2"])) 

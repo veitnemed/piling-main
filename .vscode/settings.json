@@ -1,4 +1,11 @@
 {
+    "editor.semanticHighlighting.enabled": true,
+    "editor.semanticTokenColorCustomizations": {
+        "rules": {
+            "function:python": "#DCDCAA",
+            "method:python": "#DCDCAA"
+        }
+    },
     "python.defaultInterpreterPath": "${workspaceFolder}\\.env\\Scripts\\python.exe",
     "python.testing.pytestEnabled": true,
     "python.testing.pytestArgs": [

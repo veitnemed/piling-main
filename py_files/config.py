@@ -54,7 +54,7 @@ NOISE_LEVEL = 0.3
 TIME_LIMIT = {"left": 0,
         "right": 0.15}
 
-duration_pulse = 0.01
+duration_pulse = 0.05
 PHI_VALUES = np.linspace(0,2*np.pi,200, endpoint = False)
 
 CONFIG_PARAMETRS = {"snr": SNR,
