@@ -65,14 +65,16 @@ def var_vs_params(config_params: dict,
     
     config_params = config_params.copy()
     for value in parametr_values:
+        new_config = cfg.restart_rng(config_params)
         
-        if parametr_name not in config_params:
+        if parametr_name not in new_config:
             raise KeyError(F"Неизвестный параметр {parametr_name}")
         
-        config_params[parametr_name] = value
+        new_config[parametr_name] = value
+        
         if parametr_name == "alpha":
-            config_params["R"] = radius_from_alpha(config_params, value)
-        lst = list_errors(config_params, energy_func,signal_func)
+            config_params["R"] = radius_from_alpha(new_config, value)
+        lst = list_errors(new_config, energy_func,signal_func)
         result.append(calculate_variance(lst))
     return result
 
