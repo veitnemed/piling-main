@@ -81,7 +81,7 @@ def plot_variance_vs_param(dict_values: dict,
         value * (180 / np.pi)**2 if value is not None else None
         for value in ylim])
     if xlim is not None:
-        ax.set_ylim([
+        ax.set_xlim([
         value if value is not None else None
         for value in xlim])
     ax.legend(fontsize=15)

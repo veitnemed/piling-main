@@ -21,7 +21,7 @@ N_PHI = int(2*np.pi/PHI_STEP) # Количество значений угла
 PHI_VECTOR = np.linspace(0, 2*np.pi, N_PHI, endpoint= False) # Значения угла от 0 до 2П
 
 # ПАРАМЕТРЫ АВП
-M = 5 # КОЛИЧЕСТВО ДАТЧИКОВ
+M = 1 # КОЛИЧЕСТВО ДАТЧИКОВ
 
 
 
@@ -54,7 +54,7 @@ TIME_LIMIT = {"left": 0,
         "right": 0.15}
 
 duration_pulse = 0.05
-PHI_VALUES = np.linspace(0,np.pi,36, endpoint = True) # Для построения пространства ошибок
+PHI_VALUES = np.linspace(0,np.pi,120, endpoint = True) # Для построения пространства ошибок
 
 CONFIG_PARAMETRS = {"snr": SNR,
         "M": M,
