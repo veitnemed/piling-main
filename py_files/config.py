@@ -10,7 +10,7 @@ CONST_RADIAN = (np.pi/180)**2
 
 
 # ПАРАМЕТРЫ МОДЕЛИ 
-N = 10000 # КОЛИЧЕСТВО ТОЧЕК 
+N = 5000 # КОЛИЧЕСТВО ТОЧЕК 
 
 TIME_VECTOR = np.arange(N)*DT #ВЕКТОР ВРЕМЕНИ
 DURATION_ALL = TIME_VECTOR[-1] - TIME_VECTOR[0] # ДЛИТЕЛЬНОСТЬ ИМПУЛЬСА
@@ -21,7 +21,7 @@ N_PHI = int(2*np.pi/PHI_STEP) # Количество значений угла
 PHI_VECTOR = np.linspace(0, 2*np.pi, N_PHI, endpoint= False) # Значения угла от 0 до 2П
 
 # ПАРАМЕТРЫ АВП
-M = 3 # КОЛИЧЕСТВО ДАТЧИКОВ
+M = 5 # КОЛИЧЕСТВО ДАТЧИКОВ
 
 
 
@@ -36,7 +36,7 @@ f1 = SPEED_ON_SOUND/(2*R*ALPHA)
 R1 = 1
 
 # Параметры шумы
-REALISATION_COUNT = 100
+REALISATION_COUNT = 200
 
 # ПАРАМЕТРЫ ЭКСПЕРИМЕНТА 
 SENSOR_VALUES = [1, 5, 7, 10, 12, 15, 17, 20]
@@ -54,7 +54,7 @@ TIME_LIMIT = {"left": 0,
         "right": 0.15}
 
 duration_pulse = 0.05
-PHI_VALUES = np.linspace(0,2*np.pi,36, endpoint = False) # Для построения пространства ошибок
+PHI_VALUES = np.linspace(0,np.pi,36, endpoint = True) # Для построения пространства ошибок
 
 CONFIG_PARAMETRS = {"snr": SNR,
         "M": M,

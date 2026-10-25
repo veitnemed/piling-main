@@ -73,7 +73,7 @@ def var_vs_params(config_params: dict,
         new_config[parametr_name] = value
         
         if parametr_name == "alpha":
-            config_params["R"] = radius_from_alpha(new_config, value)
+            new_config["R"] = radius_from_alpha(new_config, value)
         lst = list_errors(new_config, energy_func,signal_func)
         result.append(calculate_variance(lst))
     return result
