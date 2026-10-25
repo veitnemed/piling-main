@@ -6,7 +6,7 @@ from py_files.experiment_stats import (var_vs_params)
 def test_some_avp_signals():
     config_parametrs = cfg.init_rng(42)
     config_parametrs1 = cfg.init_rng(42)
-    p_t = get_sin_signal(cfg.TIME_VECTOR,cfg.F_GARMONIC,cfg.A)
+    p_t = get_sin_signal(config_parametrs)
     e_t = calculate_energy(p_t,cfg.TIME_VECTOR)
     
     signals1 = get_avp_signals(p_t, config_parametrs,e_t)
@@ -15,12 +15,12 @@ def test_some_avp_signals():
 
 def test_different_avp_signals():
     config_parametrs = cfg.init_rng(1)
-    p_t = get_sin_signal(cfg.TIME_VECTOR,cfg.F_GARMONIC,cfg.A)
+    p_t = get_sin_signal(config_parametrs)
     e_t = calculate_energy(p_t,cfg.TIME_VECTOR)
-    signals1 = get_avp_signals(p_t, config_parametrs,e_t)
+    signals1 = get_avp_signals(p_t, config_parametrs, e_t)
     
     config_parametrs1 = cfg.init_rng(2)
-    signals2 = get_avp_signals(p_t, config_parametrs1,e_t)
+    signals2 = get_avp_signals(p_t, config_parametrs1, e_t)
     assert any(not np.array_equal(signals1[key], signals2[key]) for key in signals1)
     
 
