@@ -78,11 +78,12 @@ def plot_variance_vs_param(dict_values: dict,
     # Параметры под графиком
     methods = ", ".join(dict_values)
     info = f"Методы: {methods}\n"
-    
-    if type_signal == "garmonic":
-        info += f"Частота сигнала: {config_params['f0']} Гц\n"
     if type_signal is not None:
         info += f"Тип сигнала: {type_signal}"
+        
+    if type_signal == "garmonic":
+        info += f"Частота сигнала: {config_params['f0']} Гц\n"
+   
     if parametr_name != "R":
         info += f"Радиус решётки: {config_params['R']:.2f} м\n"
     if parametr_name != "M":

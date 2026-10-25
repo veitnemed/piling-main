@@ -80,14 +80,16 @@ CONFIG_PARAMETRS = {"snr": SNR,
 
 def init_rng(main_seed: int = GLOBAL_SEED):
     """Инциализация стартового конфига"""
+  
     parametrs = CONFIG_PARAMETRS.copy()
     parametrs["main_rng"] = np.random.default_rng(main_seed)
     parametrs["main_seed"] = main_seed
     return parametrs
 
-def restart_rng(config_parametrs):
+def restart_rng(config_parametrs: dict) -> dict:
     """Сброс генератора"""
-    
-    config_parametrs["main_rng"] = np.random.default_rng(config_parametrs["main_seed"])
-    return config_parametrs
+    import copy
+    new_config = copy.deepcopy(config_parametrs)
+    new_config["main_rng"] = np.random.default_rng(new_config["main_seed"])
+    return new_config
     
