@@ -41,6 +41,8 @@ NAMING_DICT = {
         "alpha": r"$\alpha$",
         "phis": r"$\varphi_0$"
 }
+TYPE_SIGNALS = ["garmonic", "pulse"]
+
 def plot_variance_vs_param(dict_values: dict,
                            config_params: dict,
                            parametr_name: str,
@@ -48,7 +50,8 @@ def plot_variance_vs_param(dict_values: dict,
                            parametr_values: np.ndarray | list,
                            delta_time : float = 0,
                            y_label: str = r"$s_{\varepsilon}^{2}$",
-                           y_size: str = r", $град^2$"
+                           y_size: str = r", $град^2$",
+                           type_signal: str = None
                            ):
     """Функция строит график зависимости дисперсии оценки от параметра моделирования
     для нескольких методов"""
@@ -75,7 +78,11 @@ def plot_variance_vs_param(dict_values: dict,
     # Параметры под графиком
     methods = ", ".join(dict_values)
     info = f"Методы: {methods}\n"
-    info += f"Частота сигнала: {config_params['f0']} Гц\n"
+    
+    if type_signal == "garmonic":
+        info += f"Частота сигнала: {config_params['f0']} Гц\n"
+    if type_signal is not None:
+        info += f"Тип сигнала: {type_signal}"
     if parametr_name != "R":
         info += f"Радиус решётки: {config_params['R']:.2f} м\n"
     if parametr_name != "M":
