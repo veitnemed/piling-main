@@ -54,6 +54,9 @@ TIME_LIMIT = {"left": 0,
 BETTA_PULSE = 0.05
 PHI_VALUES = np.linspace(0,np.pi,120, endpoint = True) # Для построения пространства ошибок
 
+ALPHA_RMS_VALUES = np.arange(10,20,1)
+ALPHA_RMS = 10
+
 CONFIG_PARAMETRS = {"snr": SNR,
         "M": M,
         "time_vector": TIME_VECTOR,
@@ -69,6 +72,8 @@ CONFIG_PARAMETRS = {"snr": SNR,
         "realisation_count": REALISATION_COUNT,
         "target_phi": TARGET_PHI,
         "alpha": ALPHA,
+        "alpha_rms_values": ALPHA_RMS_VALUES,
+        "alpha_rms": ALPHA_RMS,
         "phis": PHI_VECTOR,
         "main_seed": GLOBAL_SEED,
         "main_rng": np.random.default_rng(GLOBAL_SEED),
