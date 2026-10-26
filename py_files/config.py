@@ -10,7 +10,7 @@ CONST_RADIAN = (np.pi/180)**2
 
 
 # ПАРАМЕТРЫ МОДЕЛИ 
-N = 5000 # КОЛИЧЕСТВО ТОЧЕК 
+N = 10000 # КОЛИЧЕСТВО ТОЧЕК 
 
 TIME_VECTOR = np.arange(N)*DT #ВЕКТОР ВРЕМЕНИ
 DURATION_ALL = TIME_VECTOR[-1] - TIME_VECTOR[0] # ДЛИТЕЛЬНОСТЬ ИМПУЛЬСА
@@ -53,7 +53,7 @@ SNR = 2
 TIME_LIMIT = {"left": 0,
         "right": 0.15}
 
-duration_pulse = 0.05
+BETTA_PULSE = 0.05
 PHI_VALUES = np.linspace(0,np.pi,120, endpoint = True) # Для построения пространства ошибок
 
 CONFIG_PARAMETRS = {"snr": SNR,
@@ -67,7 +67,7 @@ CONFIG_PARAMETRS = {"snr": SNR,
         "f0": F_GARMONIC,
         "A": A,
         "c": SPEED_ON_SOUND,
-        "duration_pulse": duration_pulse,
+        "duration_pulse": BETTA_PULSE,
         "realisation_count": REALISATION_COUNT,
         "target_phi": TARGET_PHI,
         "alpha": ALPHA,

@@ -2,6 +2,15 @@ import numpy as np
 from numpy.random import Generator
 from . import config as cfg
 
+
+def calculate_f_rms(freq_spectr: np.ndarray,
+                    config_parametrs: dict):
+    "Рассчёт среднеквадратической частоты"
+    return np.sqrt(np.trapezoid(y = (config_parametrs["freq_vector"]*freq_spectr)**2, 
+                                x = config_parametrs["freq_vector"]) 
+                                / (np.trapezoid(y = freq_spectr**2, 
+                                                x = config_parametrs["freq_vector"])))
+    
 def calculate_freq_spectr(signal, fs):
         fft_values = np.fft.fft(signal)/fs
         fft_centred = np.abs(np.fft.fftshift(fft_values))
