@@ -26,9 +26,8 @@ def calculate_f_rms(freq_spectr: np.ndarray,
     
 def calculate_freq_spectr(signal: np.ndarray, fs: float):
     """Вычиление амплитудного спектра (БПФ)"""
-    fft_values = np.fft.fft(signal)/fs
-    fft_centred = np.abs(np.fft.fftshift(fft_values))
-    
+    fft_values = np.fft.fft(signal)
+    fft_centred = np.fft.fftshift(fft_values)
     return fft_centred
     
 def calculate_99(freq_vector, freq_signal):
