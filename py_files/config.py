@@ -51,7 +51,7 @@ SNR = 2
 TIME_LIMIT = {"left": 0,
         "right": 0.15}
 
-BETTA_PULSE = 0.05
+BETTA_PULSE = 0.01
 PHI_VALUES = np.linspace(0,np.pi,120, endpoint = True) # Для построения пространства ошибок
 
 ALPHA_RMS_VALUES = np.arange(10,20,1)

@@ -2,6 +2,19 @@ import numpy as np
 from numpy.random import Generator
 from . import config as cfg
 
+def spectrum_filtering(freq_spectr: np.ndarray,
+                       bandwidth: float) -> np.ndarray:
+    """Идеальный НЧ фильтр отсалвется частотный диапазон от - B до B"""
+    mask = (cfg.FREQ_VECTOR < -bandwidth/2) | (cfg.FREQ_VECTOR > bandwidth/2)
+    result = freq_spectr.copy()
+    result[mask] = 0
+    return result
+
+def calculate_time_signa(freq_spectr):
+    fft_back = np.fft.ifftshift(freq_spectr)
+    complex_signal_back = np.fft.ifft(fft_back)
+    return np.real(complex_signal_back)
+    
 
 def calculate_f_rms(freq_spectr: np.ndarray,
                     config_parametrs: dict):
@@ -11,11 +24,12 @@ def calculate_f_rms(freq_spectr: np.ndarray,
                                 / (np.trapezoid(y = freq_spectr**2, 
                                                 x = config_parametrs["freq_vector"])))
     
-def calculate_freq_spectr(signal, fs):
-        fft_values = np.fft.fft(signal)/fs
-        fft_centred = np.abs(np.fft.fftshift(fft_values))
+def calculate_freq_spectr(signal: np.ndarray, fs: float):
+    """Вычиление амплитудного спектра (БПФ)"""
+    fft_values = np.fft.fft(signal)/fs
+    fft_centred = np.abs(np.fft.fftshift(fft_values))
     
-        return fft_centred
+    return fft_centred
     
 def calculate_99(freq_vector, freq_signal):
     
