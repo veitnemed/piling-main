@@ -1,16 +1,18 @@
 import numpy as np
 from numpy.random import Generator
-from . import config as cfg
+from .configs import config as cfg
 
 def spectrum_filtering(freq_spectr: np.ndarray,
                        bandwidth: float) -> np.ndarray:
-    """Идеальный НЧ фильтр отсалвется частотный диапазон от - B до B"""
-    mask = (cfg.FREQ_VECTOR < -bandwidth/2) | (cfg.FREQ_VECTOR > bandwidth/2)
-    result = freq_spectr.copy()
-    result[mask] = 0
-    return result
+    """Идеальный полосовой фильтр 
+    Оставляет частотные составляющие в диапазоне от - bandwidth до bandwidth"""
 
-def calculate_time_signa(freq_spectr):
+    mask = (cfg.FREQ_VECTOR < -bandwidth/2) | (cfg.FREQ_VECTOR > bandwidth/2)
+    freq_spectr_copy = freq_spectr.copy()
+    freq_spectr_copy[mask] = 0
+    return freq_spectr_copy
+
+def calculate_ifft(freq_spectr):
     fft_back = np.fft.ifftshift(freq_spectr)
     complex_signal_back = np.fft.ifft(fft_back)
     return np.real(complex_signal_back)
@@ -24,7 +26,8 @@ def calculate_f_rms(freq_spectr: np.ndarray,
                                 / (np.trapezoid(y = freq_spectr**2, 
                                                 x = config_parametrs["freq_vector"]))))
     
-def calculate_freq_spectr(signal: np.ndarray, fs: float):
+def calculate_fft(signal: np.ndarray, 
+                  fs: float):
     """Вычиление амплитудного спектра (БПФ)"""
     fft_values = np.fft.fft(signal)
     fft_centred = np.fft.fftshift(fft_values)
@@ -43,7 +46,7 @@ def calculate_99(freq_vector, freq_signal):
 
 def calculate_energy(signal: np.ndarray, 
                      time_vector: np.ndarray):
-    """Рассчёт энергии сигнала от 0 до T """
+    """ Рассчёт энергии сигнала на интервале наблюдения от 0 до T """
     
     return np.trapezoid(y = signal**2, x = time_vector)
 
@@ -51,32 +54,33 @@ def calculate_noise_level(energy_signal: np.ndarray,
                           snr: float, 
                           duration_all: np.ndarray):
     """Рассчёт СКО шума из опредения SNR: отношения энергии сигнала к средней энергии шума"""
+
     return np.sqrt(energy_signal/(duration_all*snr))
 
 def get_noise(config_parametrs, 
               rng: Generator,
               energy_signal: float) -> np.ndarray:
-    """Генрация помех"""
+    """Генрация АЬГШ с мат ожиданием 0"""
 
     noise_level = calculate_noise_level(energy_signal, config_parametrs["snr"], config_parametrs["duration_all"])
     return rng.normal(loc = 0, scale = noise_level, size = config_parametrs["N"])
 
-def get_gamma_array(M: int) -> np.ndarray:
+def get_gamma_array(SENSOR_AMOUNT: int) -> np.ndarray:
     """Рассчет углов датчиков относительно оси x
     Функция принимает на вход число датчиков и возвращает 
     массив углов для каждого датчика"""
     
-    return (2*np.pi/M)*np.arange(M)
+    return (2*np.pi/SENSOR_AMOUNT)*np.arange(SENSOR_AMOUNT)
 
 def get_tau_array(config_parametrs: dict) -> np.ndarray:
     """Рассчёт задержек относительно каждого датчика"""
     
-    return (config_parametrs["R"]/config_parametrs["c"])*np.cos(config_parametrs["target_phi"] - get_gamma_array(config_parametrs["M"]))
+    return (config_parametrs["R"] / config_parametrs["c"])*np.cos(config_parametrs["target_phi"] - get_gamma_array(config_parametrs["M"]))
 
 def get_impulse_signal(config_params) -> np.ndarray:
     """Тут используется приблтжение чтобы у функций был один"""
     tau = config_params["duration_pulse"]
-    return config_params["A"]*tau / (tau**2 + (config_params["time_vector"]-config_params["center_pulse"])**2)
+    return config_params["A"]*tau / (tau**2 + (config_params["time_vector"] - config_params["center_pulse"])**2)
     
 def get_sin_signal(config_params) -> np.ndarray:
     """Считаем значение гармончиеского сигнала в каждый момент времени"""
@@ -112,7 +116,7 @@ def get_channel_matrix(config_params: dict,
     channel_matrix = np.zeros((3*config_params_copy["M"], config_params_copy["N"])) # Создаём нулевую матрицу размера M x N
 
     for idx, tau in enumerate(tau_array):
-        """На каждой итерации для текущей кофигурации присваем параметру time_vector  - исзодный 
+        """На каждой итерации для текущей кофигурации присваем параметру time_vector  - исодный 
         time минус текущий тау"""
 
         config_params_copy["time_vector"] = config_params["time_vector"] - tau 

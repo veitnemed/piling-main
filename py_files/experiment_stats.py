@@ -1,7 +1,7 @@
 """Статистика экспериментов"""
 
 import numpy as np
-import py_files.config as cfg 
+import py_files.configs.config as cfg 
 from collections.abc import Callable
 
 from py_files.functions import (

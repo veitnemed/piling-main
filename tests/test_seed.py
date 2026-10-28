@@ -1,4 +1,4 @@
-import py_files.config as cfg
+import py_files.configs.config as cfg
 from py_files.functions import (get_avp_signals, get_sin_signal, get_cap_values, get_barlet_values, calculate_energy, get_impulse_signal, get_noise)
 import numpy as np
 from py_files.experiment_stats import (var_vs_params)
