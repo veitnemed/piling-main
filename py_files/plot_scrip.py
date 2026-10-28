@@ -132,3 +132,41 @@ def plot_variance_vs_param(dict_values: dict,
     
     plt.savefig(fname = f"images/report/{parametr_name}", bbox_inches = 'tight', dpi = 300)
     return fig, ax
+
+
+def create_and_save_table(rows: list,
+                          columns: list,
+                          filename: str):
+    """Таблица значений параметров графика"""
+    fig, ax = plt.subplots(figsize = (8,3))
+    ax.axis("off")
+    table = ax.table(
+        cellText=rows,
+        colLabels=columns,
+        colWidths=[0.55, 0.25, 0.20],
+        cellLoc="center",
+        loc="center"
+        )
+    for cell in table.get_celld().values():
+        cell.get_text().set_fontfamily("Times New Roman")
+    table.auto_set_font_size(False)
+    table.set_fontsize(12)
+    table.scale(1, 1.8)  # Масштаб ячеек по ширине и высоте
+
+
+    fig.tight_layout()
+    fig.canvas.draw()
+
+    bbox = table.get_window_extent(fig.canvas.get_renderer())
+    bbox = bbox.transformed(fig.dpi_scale_trans.inverted())
+
+    fig.savefig(
+        filename,
+        bbox_inches=bbox,
+        pad_inches=0,
+        dpi=300,
+        facecolor="white",
+)
+
+    plt.show()
+    
