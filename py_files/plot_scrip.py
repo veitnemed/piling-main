@@ -138,7 +138,7 @@ def create_and_save_table(rows: list,
                           columns: list,
                           filename: str):
     """Таблица значений параметров графика"""
-    fig, ax = plt.subplots(figsize = (8,3))
+    fig, ax = plt.subplots(figsize = (4,3))
     ax.axis("off")
     table = ax.table(
         cellText=rows,
