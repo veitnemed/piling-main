@@ -20,7 +20,7 @@ NOISE_LEVEL_VALUES = comon.A/np.sqrt(SNR_VALUES)
 ALPHA_VALUES = np.arange(10,20,1)
 RADIUS_VALUES = np.linspace(0,1, 10, 10)
 SDN_VALUES = comon.A / np.sqrt(np.array(SNR_VALUES))
-PHI_VALUES = np.linspace(0,np.pi,120, endpoint = True) # Для построения пространства ошибок
+PHI_VALUES = np.linspace(0,2*np.pi,120, endpoint = True) # Для построения пространства ошибок
 ALPHA_RMS_VALUES = np.arange(10,20,1)
 
 
