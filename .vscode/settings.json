@@ -1,20 +1,48 @@
 {
-    "editor.semanticHighlighting.enabled": true,
-    "editor.semanticTokenColorCustomizations": {
-        "rules": {
-            "function:python": "#DCDCAA",
-            "method:python": "#DCDCAA"
-        }
-    },
-    "python.defaultInterpreterPath": "${workspaceFolder}\\.env\\Scripts\\python.exe",
-    "python.testing.pytestEnabled": true,
-    "python.testing.pytestArgs": [
-        "tests"
-    ],
-    "pylint.ignorePatterns": [
-        "**/*.ipynb"
-    ],
-    "pylint.args": [
-        "--disable=invalid-name,trailing-whitespace,missing-module-docstring,missing-function-docstring,redefined-outer-name"
-    ]
+  "editor.semanticHighlighting.enabled": true,
+  "editor.semanticTokenColorCustomizations": {
+    "rules": {
+      "function:python": "#DCDCAA",
+      "method:python": "#DCDCAA"
+    }
+  },
+  "python.defaultInterpreterPath": "${workspaceFolder}\\.env\\Scripts\\python.exe",
+  "python.testing.pytestEnabled": true,
+  "python.testing.pytestArgs": [
+    "tests"
+  ],
+  "pylint.ignorePatterns": [
+    "**/*.ipynb"
+  ],
+  "pylint.args": [
+    "--disable=invalid-name,trailing-whitespace,missing-module-docstring,missing-function-docstring,redefined-outer-name"
+  ],
+  "python.terminal.useEnvFile": true,
+  "python.analysis.typeCheckingMode": "off",
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}"
+  ],
+  "ruff.configuration": {
+    "lint": {
+      "extend-per-file-ignores": {
+        "*.ipynb": [
+          "I001",
+          "F401",
+          "PLR0402"
+        ],
+        "*.py": [
+          "I001",
+          "F401",
+          "PLR0402"
+        ]
+      }
+    }
+  },
+  "files.exclude": {
+    "**/.pytest_cache": true,
+    ".vscode": true,
+    "**/.ruff_cache": true,
+    ".env": true,
+    "**/__pycache__": true
+  }
 }

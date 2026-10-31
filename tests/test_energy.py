@@ -5,6 +5,7 @@ from py_files.functions import calculate_energy
 import py_files.configs.comon as comon
 
 def test_rectangular_pulse_energy():
+    """Тестируем энергию сигнала, проверяем с аналитической формулой"""
     A = 2       # Амплитуда
     t_0 = comon.DURATION_ALL/2    # ЦЕНТР ИМПУЛЬСА (например, в точке t = 2)
     tau = comon.DURATION_ALL/10     # Полная длительность импульса (ширина)

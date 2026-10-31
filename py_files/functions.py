@@ -17,10 +17,10 @@ def calculate_ifft(freq_spectr):
     complex_signal_back = np.fft.ifft(fft_back)
     return np.real(complex_signal_back)
     
-
 def calculate_f_rms(freq_spectr: np.ndarray,
                     config_parametrs: dict):
-    "Рассчёт среднеквадратической частоты"
+    
+    "Рассчёт среднеквадратической эффективной частоты"
     return np.abs(np.sqrt(np.trapezoid(y = (config_parametrs["freq_vector"]*freq_spectr)**2, 
                                 x = config_parametrs["freq_vector"]) 
                                 / (np.trapezoid(y = freq_spectr**2, 
@@ -77,7 +77,7 @@ def get_tau_array(config_parametrs: dict) -> np.ndarray:
     
     return (config_parametrs["R"] / config_parametrs["c"])*np.cos(config_parametrs["target_phi"] - get_gamma_array(config_parametrs["M"]))
 
-def get_impulse_signal(config_params) -> np.ndarray:
+def get_impulse_signal(config_params: dict) -> np.ndarray:
     """Тут используется приблтжение чтобы у функций был один"""
     tau = config_params["duration_pulse"]
     return config_params["A"]*tau / (tau**2 + (config_params["time_vector"] - config_params["center_pulse"])**2)
@@ -87,11 +87,9 @@ def get_sin_signal(config_params) -> np.ndarray:
     
     return  config_params["A"]*np.sin(config_params["time_vector"]*(2*np.pi*config_params["f0"]))
 
-
-
 def get_avp_signals(p_t: np.ndarray,
-                    config_parametrs,
-                    energy_signal) -> dict:
+                    config_parametrs: dict,
+                    energy_signal: float) -> dict:
     """Рассчёт значений каналов y0 y1 y2 для АВП"""
 
     child_seeds = config_parametrs["main_rng"].bit_generator.seed_seq.spawn(3)
@@ -135,15 +133,16 @@ def get_covariation_matrix(matrix: np.ndarray,
     """Рассчёт ковариационной матрицы"""
     return (matrix @ matrix.T) / N
 
-def get_direction_vector(phi: float, M: int) -> np.ndarray:
+def calculate_stiring_vector(phi: float, 
+                         M: int) -> np.ndarray:
     """Направляющий вектор"""
     return np.array([1,np.cos(phi),np.sin(phi)]*M).T
 
-def get_direction_matrix(phis: np.ndarray, M: int):
+def calculate_stiring_matrix(phis: np.ndarray, M: int):
     """Рассчёт матрицы направляющих векторов"""
-    return np.array([get_direction_vector(phi, M) for phi in phis])
+    return np.array([calculate_stiring_vector(phi, M) for phi in phis])
 
-def get_cap_values(
+def calculate_capon_values(
                  W: np.ndarray,
                  dir_matrix: np.ndarray) -> list:
     """Рассчёт значений энергетического спектра  Кейпона"""
@@ -156,7 +155,7 @@ def get_est_phi(phi_vector: np.ndarray, e_values: np.ndarray) -> float:
     """Определяем угол по максимум аргумента Барлета"""
     return phi_vector[np.argmax(e_values)]
 
-def get_barlet_values(
+def calculate_barlet_values(
                  W: np.ndarray,
                  dir_matrix: np.ndarray) -> list:
     """Рассчёт значений энергетического спектра  Барлета"""
