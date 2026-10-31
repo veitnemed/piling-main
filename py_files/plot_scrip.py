@@ -1,6 +1,8 @@
 import numpy as np
 from matplotlib import pyplot as plt
 
+from py_files.configs import config
+
 
 PI_AXIS = { "ticks": np.arange(9) * np.pi / 4,
             "labels": [
@@ -42,6 +44,8 @@ NAMING_DICT = {
         "phis": r"$\varphi_0$"
 }
 TYPE_SIGNALS = ["garmonic", "pulse"]
+
+
 
 def plot_variance_vs_param(dict_values: dict,
                            config_params: dict,
@@ -169,4 +173,42 @@ def create_and_save_table(rows: list,
 )
 
     plt.show()
+
+def create_config_table(config_params: np.ndarray,):
+    """Таблица значений параметров графика"""
+    
+    columns = ["Параметр", "Значение"]
+    rows = [
+    [key, value]
+    for key, value in sorted(config_params.items())
+    if isinstance(value, (int, float, np.integer, np.floating))
+    and not isinstance(value, (bool, np.bool_))]
+    
+    fig, ax = plt.subplots(
+    figsize=(8, max(2, 0.35 * (len(rows) + 1)))
+)
+    ax.axis("off")
+    table = ax.table(
+    cellText=rows,
+    colLabels=columns,
+    colWidths=[0.55, 0.45],
+    cellLoc="center",
+    bbox=[0, 0, 1, 1],
+)
+    for cell in table.get_celld().values():
+        cell.get_text().set_fontfamily("Times New Roman")
+
+    table.auto_set_font_size(False)
+    table.set_fontsize(12)
+    table.scale(1, 1.8)  # Масштаб ячеек по ширине и высоте
+
+
+    fig.tight_layout()
+    fig.canvas.draw()
+
+    bbox = table.get_window_extent(fig.canvas.get_renderer())
+    bbox = bbox.transformed(fig.dpi_scale_trans.inverted())
+    plt.show()
+
+
     
