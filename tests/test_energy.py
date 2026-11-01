@@ -1,5 +1,4 @@
 import numpy as np
-from py_files.configs.config import DURATION_ALL
 import py_files.configs.config as cfg
 from py_files.functions import calculate_energy
 import py_files.configs.comon as comon
