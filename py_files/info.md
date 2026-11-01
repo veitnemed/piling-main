@@ -66,9 +66,9 @@ $$
 Относительные габариты решётки $\dfrac{\lambda_{\min}}{2R}$; $\lambda_{\min} = \lambda$ для гармонического тестового сигнала, $\lambda_{\min} = \lambda(\tau)$ для импульсного тестового сигнала, спектральная плотность которого равна $0{,}5A e^{-\lvert\omega\rvert\tau}$, $\omega = \dfrac{2\pi c}{\lambda}$; количество датчиков $M$; отношения сигнал/шум:
 
 $$
-\frac{A^2}{\sigma_p^2}, \qquad
-\frac{A^2}{\sigma_{x_1}^2}, \qquad
-\frac{A^2}{\sigma_{x_2}^2};
+\frac{E_{signal}}{E_{noise}}, \qquad
+\frac{E_{signal1}}{E_{noise1}}, \qquad
+\frac{E_{signal2}}{E_{noise2}};
 $$
 
 среднеарифметическое значение оценок азимута каждым отдельным АВП.
