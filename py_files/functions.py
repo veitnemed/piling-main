@@ -35,7 +35,7 @@ def calculate_fft(signal: np.ndarray,
     
 def calculate_99(freq_vector, freq_signal):
     
-    power = freq_signal**2
+    power = np.abs(freq_signal)**2
     order = np.argsort(np.abs(freq_vector))
 
     energy_1 = np.cumsum(power[order])

@@ -31,6 +31,7 @@ def create_parameters_config() -> dict:
     """Создание конфигурации"""
 
     return {"dt": comon.DT,
+            "df": comon.DF,
         "snr": comon.SNR,
         "M": comon.M,
         "time_vector": TIME_VECTOR,
