@@ -3,42 +3,48 @@ from numpy.random import Generator
 from .configs import config as cfg
 
 
-def filtering_spectrum(freq_spectr: np.ndarray, bandwidth: float) -> np.ndarray:
-    """Идеальный полосовой фильтр
-    Оставляет частотные составляющие в диапазоне от - bandwidth до bandwidth"""
+def filtering_spectrum(spectrum: np.ndarray, 
+                       bandwidth: float) -> np.ndarray:
+    """Идеальный ФНЧ фильтр
+    Оставляет частотные составляющие в диапазоне от 
+    - bandwidth до bandwidth"""
 
     mask = (cfg.FREQ_VECTOR < -bandwidth / 2) | (cfg.FREQ_VECTOR > bandwidth / 2)
-    freq_spectr_copy = freq_spectr.copy()
+    freq_spectr_copy = spectrum.copy()
     freq_spectr_copy[mask] = 0
     return freq_spectr_copy
 
 
-def calculate_ifft(freq_spectr):
-    """Обратное преобразование фурье"""
-    fft_back = np.fft.ifftshift(freq_spectr)
+def calculate_ifft(spectrum: np.ndarray) -> np.ndarray:
+    """Обратное преобразование фурье во временную область
+    S(f) [компелексный] -> s(t)"""
+
+    fft_back = np.fft.ifftshift(spectrum)
     complex_signal_back = np.fft.ifft(fft_back)
     return np.real(complex_signal_back)
 
 
-def calculate_f_rms(freq_spectr: np.ndarray, config_parametrs: dict):
+def calculate_f_rms(spectrum: np.ndarray, config_parametrs: dict):
     "Рассчёт среднеквадратической эффективной частоты"
     return np.abs(
         np.sqrt(
             np.trapezoid(
-                y=(config_parametrs["freq_vector"] * np.abs(freq_spectr)) ** 2,
+                y=(config_parametrs["freq_vector"] * np.abs(spectrum)) ** 2,
                 x=config_parametrs["freq_vector"],
             )
             / (
                 np.trapezoid(
-                    y=np.abs(freq_spectr) ** 2, x=config_parametrs["freq_vector"]
+                    y=np.abs(spectrum) ** 2, x=config_parametrs["freq_vector"]
                 )
             )
         )
     )
 
 
-def calculate_fft(signal: np.ndarray, fs: float):
-    """Вычиление комплексного амплитудного спектра (БПФ) без модуля"""
+def calculate_fft(signal: np.ndarray):
+    """Вычиление комплексного амплитудного спектра (БПФ) без модуля
+    s(t) -> S(f) [комплексныый]"""
+
     fft_values = np.fft.fft(signal)
     fft_centred = np.fft.fftshift(fft_values)
     return fft_centred
@@ -49,20 +55,22 @@ def filering_signal(signal: np.ndarray,
                     fs: float) -> np.ndarray:
     """Фильтрация сигнала"""
     """Принимает сигнал во времнной области и возращает тоже
-    во временной """
+    во временной (ШИРИНА ФИЛЬТРАЦИИ 2*B) """
 
-    freq_signal = calculate_fft(signal, fs)
+    freq_signal = calculate_fft(signal)
     filt_freq_signal = filtering_spectrum(freq_signal, bandwidth)
     back_signal = calculate_ifft(filt_freq_signal)
 
     return back_signal
 
 
-def calculate_99(freq_vector, freq_signal):
+def calculate_99(freq_vector: np.ndarray, 
+                 freq_signal: np.ndarray):
+    """Рассчёт односторонней ширины спектра при которой сохранеется
+    99% энергии (ШИРИНА ФИЛЬТРАЦИИ 2*B) """
 
     power = np.abs(freq_signal) ** 2
     order = np.argsort(np.abs(freq_vector))
-
     energy_1 = np.cumsum(power[order])
     energy_1 /= energy_1[-1]
     idx = np.searchsorted(energy_1, 0.99)
@@ -72,7 +80,6 @@ def calculate_99(freq_vector, freq_signal):
 
 def calculate_energy(signal: np.ndarray, time_vector: np.ndarray):
     """Рассчёт энергии сигнала на интервале наблюдения от 0 до T"""
-
     return np.trapezoid(y=signal**2, x=time_vector)
 
 
