@@ -176,10 +176,14 @@ def create_and_save_table(rows: list,
 
 def create_config_table(config_params: np.ndarray,):
     """Таблица значений параметров графика"""
+
+    def round_n(number, k):
+        """Округление числа до n значящих цифр"""
+        return round(number,int(np.log10(1/number)) + k)
     
     columns = ["Параметр", "Значение"]
     rows = [
-    [key, value]
+    [key, round_n(value,2)]
     for key, value in sorted(config_params.items())
     if isinstance(value, (int, float, np.integer, np.floating))
     and not isinstance(value, (bool, np.bool_))]

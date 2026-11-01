@@ -21,9 +21,9 @@ def calculate_f_rms(freq_spectr: np.ndarray,
                     config_parametrs: dict):
     
     "Рассчёт среднеквадратической эффективной частоты"
-    return np.abs(np.sqrt(np.trapezoid(y = (config_parametrs["freq_vector"]*freq_spectr)**2, 
+    return np.abs(np.sqrt(np.trapezoid(y = (config_parametrs["freq_vector"]*np.abs(freq_spectr))**2, 
                                 x = config_parametrs["freq_vector"]) 
-                                / (np.trapezoid(y = freq_spectr**2, 
+                                / (np.trapezoid(y = np.abs(freq_spectr)**2, 
                                                 x = config_parametrs["freq_vector"]))))
     
 def calculate_fft(signal: np.ndarray, 
