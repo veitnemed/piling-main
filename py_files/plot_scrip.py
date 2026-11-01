@@ -134,7 +134,7 @@ def plot_variance_vs_param(dict_values: dict,
             clip_on=False
         )
     
-    plt.savefig(fname = f"images/report/{parametr_name}", bbox_inches = 'tight', dpi = 300)
+    plt.savefig(fname = f"attachment/images/report/{parametr_name}", bbox_inches = 'tight', dpi = 300)
     return fig, ax
 
 
