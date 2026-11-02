@@ -24,14 +24,16 @@ M = 5 # КОЛИЧЕСТВО ДАТЧИКОВ
 SNR = 2 # ОТНОШЕНИЕ СИГНАЛ/ШУМ 
 BETTA_PULSE = 0.02 # ДЛИТЕЛЬНОСТЬ ИМПУЛЬСНОГО СИГНАЛА 
 F_GARMONIC =  1000 # ЦЕНТРАЛЬНАЯ ЧАСТОТА ГАРМОНИЧЕСКОГО СИГНАЛА 
-CENTER_PULSE = DURATION_ALL/2 # Центр импульсного сигнала 
+CENTER_PULSE = DURATION_ALL / 2 # Центр импульсного сигнала 
+
 A = 1 # АМПЛИТУДА СИГНАЛА 
 ALPHA = 10
-ALPHA_RMS = 10
+RMS_ALPHA = 10
 PHI_STEP = 0.001 # Шаг поиска угла 0.0003
 K = 0.5 # коэффицент для полосы решетки 
 
-R = SPEED_ON_SOUND / (2*F_GARMONIC*ALPHA) # РАДИУС РЕШЕТКИ АВП
+RADIUS = SPEED_ON_SOUND / (2*F_GARMONIC*ALPHA) # РАДИУС РЕШЕТКИ АВП
+
 TARGET_PHI = np.pi # АЗИМУТ ПОД КОТОРЫМ ПРИХОДИТ ИСГНАЛ (ТО ЧТО ОЦЕНИВАЕМ)
 AMOUNT_PHI = int(2*np.pi/PHI_STEP) # Количество значений угла 
 CONST_RADIAN = (np.pi/180)**2

@@ -39,7 +39,7 @@ def create_parameters_config() -> dict:
         "duration_all": comon.DURATION_ALL,
         "N": comon.N,
         "fs": comon.FS,
-        "R": comon.R,
+        "R": comon.RADIUS,
         "f0": comon.F_GARMONIC,
         "A": comon.A,
         "c": comon.SPEED_ON_SOUND,
@@ -48,11 +48,12 @@ def create_parameters_config() -> dict:
         "target_phi": comon.TARGET_PHI,
         "alpha": comon.ALPHA,
         "alpha_rms_values": ALPHA_RMS_VALUES,
-        "alpha_rms": comon.ALPHA_RMS,
+        "alpha_rms": comon.RMS_ALPHA,
         "phis": PHI_VECTOR,
         "main_seed": comon.GLOBAL_SEED,
         "main_rng": np.random.default_rng(comon.GLOBAL_SEED),
         "center_pulse": comon.CENTER_PULSE}
+
 
 # ========== INIT =======
 # ========================
