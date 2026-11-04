@@ -37,5 +37,6 @@ TARGET_PHI = np.pi # АЗИМУТ ПОД КОТОРЫМ ПРИХОДИТ ИСГ�
 AMOUNT_PHI = int(2*np.pi/PHI_STEP) # Количество значений угла 
 CONST_RADIAN = (np.pi/180)**2
 
+FIG_SIZE = (14,6)
 #ALPHA = 10
 #RMS_ALPHA = 10
