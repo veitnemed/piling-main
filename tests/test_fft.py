@@ -52,3 +52,4 @@ def test_f99_for_gauss():
 
 
     assert (E_rect_filt/E_gaus)*100 >= 99
+

@@ -4,15 +4,17 @@ from .configs import config as cfg
 
 
 def filtering_spectrum(spectrum: np.ndarray, 
-                       bandwidth: float) -> np.ndarray:
+                       bandwidth: float,
+                       fs: float) -> np.ndarray:
     """Идеальный ФНЧ фильтр
     Оставляет частотные составляющие в диапазоне от 
     - bandwidth до bandwidth"""
 
-    mask = (cfg.FREQ_VECTOR < -bandwidth / 2) | (cfg.FREQ_VECTOR > bandwidth / 2)
-    freq_spectr_copy = spectrum.copy()
-    freq_spectr_copy[mask] = 0
-    return freq_spectr_copy
+    local_freq_vector = np.fft.fftshift(np.fft.fftfreq(len(spectrum), d=1/fs))
+    mask = (local_freq_vector < -bandwidth / 2) | (local_freq_vector > bandwidth / 2)
+    spectrum_copy = spectrum.copy()
+    spectrum_copy[mask] = 0
+    return spectrum_copy
 
 
 def calculate_ifft(spectrum: np.ndarray) -> np.ndarray:
@@ -58,7 +60,7 @@ def filering_signal(signal: np.ndarray,
     во временной (ШИРИНА ФИЛЬТРАЦИИ 2*B) """
 
     freq_signal = calculate_fft(signal)
-    filt_freq_signal = filtering_spectrum(freq_signal, bandwidth)
+    filt_freq_signal = filtering_spectrum(freq_signal, bandwidth, fs)
     back_signal = calculate_ifft(filt_freq_signal)
 
     return back_signal
