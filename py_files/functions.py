@@ -188,6 +188,26 @@ def get_covariation_matrix(matrix: np.ndarray, N: int) -> np.ndarray:
     """Рассчёт ковариационной матрицы"""
     return (matrix @ matrix.T) / N
 
+def calculate_complex_stiring_vector(phi: float,
+                                     tau_array: np.ndarray, 
+                                     f0: float,
+                                     M: int) -> np.ndarray:
+    "Рассчет комплексного стиринг-вектора"
+
+    return np.array([[1, np.cos(phi), np.sin(phi)]*np.exp(-2j*np.pi*f0*tau_array[i]) 
+                     for i in range(M)])
+
+def calculate_complex_stiring_matrix(phis: np.ndarray, 
+                                     M: int,
+                                     f0: float,
+                                     tau_array: np.ndarray) -> np.ndarray:
+    """Рассчёт матрицы стиринг-векторов"""
+    return np.array([calculate_stiring_vector(phi,tau_array,f0, M) for phi in phis])
+
+def calculate_full_barlet_values(W: np.ndarray, 
+                            complex_stiring_matrix: np.ndarray) -> list:
+    """Рассчёт значений энергетического спектра  Барлета"""
+    return np.sum((np.conj(complex_stiring_matrix) @ W) * complex_stiring_matrix, axis=1)
 
 def calculate_stiring_vector(phi: float, M: int) -> np.ndarray:
     """Направляющий вектор"""
@@ -197,6 +217,7 @@ def calculate_stiring_vector(phi: float, M: int) -> np.ndarray:
 def calculate_stiring_matrix(phis: np.ndarray, M: int):
     """Рассчёт матрицы направляющих векторов"""
     return np.array([calculate_stiring_vector(phi, M) for phi in phis])
+
 
 
 def calculate_capon_values(W: np.ndarray, dir_matrix: np.ndarray) -> list:
