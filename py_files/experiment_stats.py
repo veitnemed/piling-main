@@ -59,9 +59,6 @@ def calculate_variance(list_errors: list) -> float:
     return var / (K - 1)
 
 
-def radius_from_alpha(config_params, alpha) -> float:
-    """Значение радиуса по альфа при фиксированной частоте"""
-    return config_params["c"] / (2 * config_params["f0"] * alpha)
 
 
 def var_vs_params(
@@ -83,8 +80,10 @@ def var_vs_params(
 
         new_config[parametr_name] = value
 
-        if parametr_name == "alpha":
-            new_config["R"] = radius_from_alpha(new_config, value)
+        # Данный фрагмент кода не является актуальным
+        #if parametr_name == "alpha":
+            #new_config["R"] = radius_from_alpha(new_config, value)
+            
         lst = list_errors(new_config, energy_func, signal_func)
         result.append(calculate_variance(lst))
     return result

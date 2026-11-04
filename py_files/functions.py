@@ -82,9 +82,7 @@ def calculate_energy(signal: np.ndarray, time_vector: np.ndarray):
     """Рассчёт энергии сигнала на интервале наблюдения от 0 до T"""
     return np.trapezoid(y=signal**2, x=time_vector)
 
-def calculate_radius_rms(params: dict, f_rms: float):
-    """Radius RMS - это радиус решетки, расчитанный через f_rms и alpha_rms"""
-    return params["c"] / (2 * f_rms * params["alpha_rms"])
+
 
 def calculate_noise_level(
     energy_signal: np.ndarray, snr: float, duration_all: np.ndarray

@@ -24,28 +24,25 @@ LABELS_DICT = {
     "snr": "SNR (c/ш)",
     "M": "количества датчиков",
     "R": "радиуса решетки",
-    "alpha": r"$\alpha = \frac{\lambda}{2R} $",
-    "phis": r"$\varphi_0$"
+    "phis": r"$\varphi_0$",
+    #"alpha": r"$\alpha = \frac{\lambda}{2R} $",
     
 }
 XLABELS_DICT = {
     "snr": "SNR (c/ш)",
     "M": "M (кол-во датчиков), шт",
     "R": "R (радиус решётки АВП), м",
-    "alpha": r"$\alpha = \frac{\lambda}{2R} $",
-    "phis": r"$\varphi_0, град$"
-    
+    "phis": r"$\varphi_0, град$",
+    #"alpha": r"$\alpha = \frac{\lambda}{2R} $",
 }
 NAMING_DICT = {
     "snr": "SNR",
         "M": "M",
         "R": "R",
-        "alpha": r"$\alpha$",
-        "phis": r"$\varphi_0$"
+        "phis": r"$\varphi_0$",
+        #"alpha": r"$\alpha$",
 }
 TYPE_SIGNALS = ["garmonic", "pulse"]
-
-
 
 def plot_variance_vs_param(dict_values: dict,
                            config_params: dict,
