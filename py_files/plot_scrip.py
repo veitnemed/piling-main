@@ -88,7 +88,7 @@ def plot_variance_vs_param(dict_values: dict,
     ax.legend(fontsize=15)
     # Параметры под графиком
     methods = ", ".join(dict_values)
-    info = f"Методы: {methods}\n"
+    info = ""
     if type_signal is not None:
         info += f"Тип сигнала: {type_signal}"
         

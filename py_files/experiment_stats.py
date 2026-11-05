@@ -70,8 +70,10 @@ def var_vs_params(
     config_params: dict,
     energy_func: Callable,
     signal_func: Callable,
+    stiring_func: Callable,
     parametr_name: str,
     parametr_values: np.ndarray | list,
+
     
 ):
     """Универсальная фанкция для построения зависимость дисперссии от параметра моделирования"""
@@ -90,6 +92,6 @@ def var_vs_params(
         #if parametr_name == "alpha":
             #new_config["R"] = radius_from_alpha(new_config, value)
             
-        lst = list_errors(new_config, energy_func, signal_func)
+        lst = list_errors(new_config, energy_func, signal_func, stiring_func)
         result.append(calculate_variance(lst))
     return result
