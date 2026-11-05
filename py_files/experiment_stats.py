@@ -13,6 +13,7 @@ from py_files.functions import (
 )
 
 
+
 def single_est(
     config_params: dict, 
     dir_matrix: np.ndarray, 
@@ -63,8 +64,9 @@ def calculate_variance(list_errors: list) -> float:
         var += (m_error - error) ** 2
     return var / (K - 1)
 
-
-
+def calculate_mean(list_errors: list) -> float:
+    """Считаем дисперсию по списку ошибок"""
+    return sum(list_errors)/len(list_errors)
 
 def var_vs_params(
     config_params: dict,
@@ -73,15 +75,20 @@ def var_vs_params(
     stiring_func: Callable,
     parametr_name: str,
     parametr_values: np.ndarray | list,
+    is_CRN: bool = True):
 
-    
-):
     """Универсальная фанкция для построения зависимость дисперссии от параметра моделирования"""
     result = []
 
     config_params = config_params.copy()
+    new_config = config_params
     for value in parametr_values:
-        new_config = cfg.restart_rng(config_params)
+
+        if is_CRN is True:
+            new_config = cfg.restart_rng(config_params)
+
+
+
 
         if parametr_name not in new_config:
             raise KeyError(f"Неизвестный параметр {parametr_name}")
@@ -94,4 +101,36 @@ def var_vs_params(
             
         lst = list_errors(new_config, energy_func, signal_func, stiring_func)
         result.append(calculate_variance(lst))
+    return result
+
+def mean_vs_params(
+    config_params: dict,
+    energy_func: Callable,
+    signal_func: Callable,
+    stiring_func: Callable,
+    parametr_name: str,
+    parametr_values: np.ndarray | list,
+    is_CRN: bool = True):
+    """Универсальная фанкция для построения зависимость дисперссии от параметра моделирования"""
+    result = []
+
+
+    config_params = config_params.copy()
+    new_config = config_params
+    for value in parametr_values:
+        
+        if is_CRN is True:
+            new_config = cfg.restart_rng(config_params)
+
+        if parametr_name not in new_config:
+            raise KeyError(f"Неизвестный параметр {parametr_name}")
+
+        new_config[parametr_name] = value
+
+        # Данный фрагмент кода не является актуальным
+        #if parametr_name == "alpha":
+            #new_config["R"] = radius_from_alpha(new_config, value)
+            
+        lst = list_errors(new_config, energy_func, signal_func, stiring_func)
+        result.append(calculate_mean(lst))
     return result
