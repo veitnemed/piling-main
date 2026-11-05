@@ -33,6 +33,9 @@ PHI_VALUES = np.linspace(0,2*np.pi,30, endpoint = True) # Для построе�
 
 def create_parameters_config() -> dict:
     """Создание конфигурации"""
+    TIME_VECTOR = np.arange(comon.N)*comon.DT
+    FREQ_VECTOR = np.fft.fftshift(np.fft.fftfreq(comon.N, d=1/comon.FS))
+    PHI_VECTOR = np.linspace(0, 2*np.pi, comon.AMOUNT_PHI, endpoint= False)
 
     return {"dt": comon.DT,
             "df": comon.DF,

@@ -14,7 +14,10 @@ from py_files.functions import (
 
 
 def single_est(
-    config_params: dict, dir_matrix: np.ndarray, target_func: Callable, signal_func
+    config_params: dict, 
+    dir_matrix: np.ndarray, 
+    target_func: Callable, 
+    signal_func
 ) -> float:
     """Считаем оценку по одной ревлизации шума"""
 
@@ -33,15 +36,17 @@ def single_error(est, target_phi):
     return (est - target_phi + np.pi) % (2 * np.pi) - np.pi
 
 
-def list_errors(
-    config_params: dict, energy_func: Callable, signal_func: Callable
-) -> float:
+def list_errors(config_params: dict, 
+                target_func: Callable, 
+                signal_func: Callable,
+                stiring_func: Callable) -> float:
     """Формируем список ошибок для каждой реализации шума"""
-    dir_matrix = calculate_stiring_matrix(config_params["phis"], config_params["M"])
+    
+    dir_matrix = stiring_func(config_params)
 
     return [
         single_error(
-            single_est(config_params, dir_matrix, energy_func, signal_func),
+            single_est(config_params, dir_matrix, target_func, signal_func),
             config_params["target_phi"],
         )
         for _ in range(config_params["realisation_count"])
@@ -67,6 +72,7 @@ def var_vs_params(
     signal_func: Callable,
     parametr_name: str,
     parametr_values: np.ndarray | list,
+    
 ):
     """Универсальная фанкция для построения зависимость дисперссии от параметра моделирования"""
     result = []

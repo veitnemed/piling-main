@@ -129,7 +129,7 @@ def get_impulse_signal(config_params: dict) -> np.ndarray:
     )
 
 
-def get_sin_signal(config_params) -> np.ndarray:
+def get_sin_signal(config_params: dict) -> np.ndarray:
     """Считаем значение гармончиеского сигнала в каждый момент времени"""
 
     return config_params["A"] * np.sin(
@@ -159,9 +159,9 @@ def get_avp_signals(
     return {"y0": y0, "y1": y1, "y2": y2}
 
 
-def get_channel_matrix(
-    config_params: dict, tau_array: np.ndarray, signal_func
-) -> np.ndarray:
+def get_channel_matrix(config_params: dict, 
+                       tau_array: np.ndarray, 
+                       signal_func) -> np.ndarray:
     """Функция возращает матрицу 3M x N со значениями для каждого из трёх каналов датчика АВП"""
 
     config_params_copy = config_params.copy()
@@ -194,15 +194,19 @@ def calculate_complex_stiring_vector(phi: float,
                                      M: int) -> np.ndarray:
     "Рассчет комплексного стиринг-вектора"
 
-    return np.array([[1, np.cos(phi), np.sin(phi)]*np.exp(-2j*np.pi*f0*tau_array[i]) 
-                     for i in range(M)])
+    return np.array([x for i in range(M) 
+                     for x in np.array([1, np.cos(phi), np.sin(phi)])*np.exp(-2j*np.pi*f0*tau_array[i])]).T
 
-def calculate_complex_stiring_matrix(phis: np.ndarray, 
-                                     M: int,
-                                     f0: float,
-                                     tau_array: np.ndarray) -> np.ndarray:
+def calculate_complex_stiring_matrix(configs: dict) -> np.ndarray:
     """Рассчёт матрицы стиринг-векторов"""
-    return np.array([calculate_stiring_vector(phi,tau_array,f0, M) for phi in phis])
+    res = []
+    
+    for phi in configs["phis"]:
+        config_copy = configs.copy()
+        config_copy["target_phi"] = phi
+        tau_array = get_tau_array(configs)
+        res.append(calculate_complex_stiring_vector(phi, tau_array, configs["f0"], configs["M"]))
+    return np.array(res)
 
 def calculate_full_barlet_values(W: np.ndarray, 
                             complex_stiring_matrix: np.ndarray) -> list:
@@ -213,10 +217,15 @@ def calculate_stiring_vector(phi: float, M: int) -> np.ndarray:
     """Направляющий вектор"""
     return np.array([1, np.cos(phi), np.sin(phi)] * M).T
 
+def calculate_full_capon_values(W: np.ndarray, complex_dir_matrix: np.ndarray) -> list:
+    """Рассчёт значений энергетического спектра  Кейпона"""
+    W_inv = np.linalg.inv(W)
 
-def calculate_stiring_matrix(phis: np.ndarray, M: int):
+    return 1 / (np.sum((np.conj(complex_dir_matrix) @ W_inv) * complex_dir_matrix, axis=1))
+
+def calculate_stiring_matrix(config_params: dict):
     """Рассчёт матрицы направляющих векторов"""
-    return np.array([calculate_stiring_vector(phi, M) for phi in phis])
+    return np.array([calculate_stiring_vector(phi, config_params["M"]) for phi in config_params["phi_vector"]])
 
 
 
