@@ -90,7 +90,7 @@ def plot_variance_vs_param(dict_values: dict,
     methods = ", ".join(dict_values)
     info = ""
     if type_signal is not None:
-        info += f"Тип сигнала: {type_signal}"
+        info += f"Тип сигнала: {type_signal}\n"
         
     if type_signal == "garmonic":
         info += f"Частота сигнала: {config_params['f0']} Гц\n"

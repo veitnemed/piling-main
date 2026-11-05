@@ -18,7 +18,7 @@ SENSOR_VALUES = [1, 5, 7, 10, 12, 15, 17, 20]
 SNR_VALUES = np.linspace(0.5, 10, 10)
 NOISE_LEVEL_VALUES = comon.A/np.sqrt(SNR_VALUES)
 
-RADIUS_VALUES = np.linspace(0.1, 25, 100)
+RADIUS_VALUES = np.linspace(0.1, 1, 10)
 SDN_VALUES = comon.A / np.sqrt(np.array(SNR_VALUES))
 PHI_VALUES = np.linspace(0,2*np.pi,30, endpoint = True) # Для построения пространства ошибок
 
