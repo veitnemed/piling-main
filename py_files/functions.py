@@ -204,7 +204,7 @@ def calculate_complex_stiring_matrix(configs: dict) -> np.ndarray:
     for phi in configs["phis"]:
         config_copy = configs.copy()
         config_copy["target_phi"] = phi
-        tau_array = get_tau_array(configs)
+        tau_array = get_tau_array(config_copy)
         res.append(calculate_complex_stiring_vector(phi, tau_array, configs["f0"], configs["M"]))
     return np.array(res)
 
@@ -225,7 +225,7 @@ def calculate_full_capon_values(W: np.ndarray, complex_dir_matrix: np.ndarray) -
 
 def calculate_stiring_matrix(config_params: dict):
     """Рассчёт матрицы направляющих векторов"""
-    return np.array([calculate_stiring_vector(phi, config_params["M"]) for phi in config_params["phi_vector"]])
+    return np.array([calculate_stiring_vector(phi, config_params["M"]) for phi in config_params["phis"]])
 
 
 

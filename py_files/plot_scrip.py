@@ -137,7 +137,8 @@ def plot_variance_vs_param(dict_values: dict,
 
 def create_and_save_table(rows: list,
                           columns: list,
-                          filename: str):
+                          filename: str,
+                          save: bool = True):
     """Таблица значений параметров графика"""
     fig, ax = plt.subplots(figsize = (4,3))
     ax.axis("off")
@@ -160,14 +161,13 @@ def create_and_save_table(rows: list,
 
     bbox = table.get_window_extent(fig.canvas.get_renderer())
     bbox = bbox.transformed(fig.dpi_scale_trans.inverted())
-
-    fig.savefig(
-        filename,
-        bbox_inches=bbox,
-        pad_inches=0,
-        dpi=300,
-        facecolor="white",
-)
+    if save is False:
+        fig.savefig(
+            filename,
+            bbox_inches=bbox,
+            pad_inches=0,
+            dpi=300,
+            facecolor="white")
 
     plt.show()
 
