@@ -1,13 +1,13 @@
 import numpy as np
-import py_files.configs.config as cfg
-from py_files.functions import (calculate_energy, 
+import src.configs.config as cfg
+from src.functions import (calculate_energy, 
                                 calculate_f_rms, 
                                 calculate_fft, 
                                 get_impulse_signal,
                                 get_sin_signal,
                                 filering_signal,
                                 calculate_99)
-import py_files.configs.comon as comon
+import src.configs.comon as comon
 
 def test_lorenth_freq_rms():
     """Тест сранивает численное вычисление f rms для испульса Лоренца от O до T 

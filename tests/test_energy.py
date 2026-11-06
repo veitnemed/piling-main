@@ -1,7 +1,7 @@
 import numpy as np
-import py_files.configs.config as cfg
-from py_files.functions import calculate_energy
-import py_files.configs.comon as comon
+import src.configs.config as cfg
+from src.functions import calculate_energy
+import src.configs.comon as comon
 
 def test_rectangular_pulse_energy():
     """Тестируем энергию сигнала, проверяем с аналитической формулой"""

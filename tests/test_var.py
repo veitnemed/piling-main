@@ -1,4 +1,4 @@
-from py_files.experiment_stats import calculate_variance, calculate_mean
+from src.experiments import calculate_variance, calculate_mean
 import numpy as np
 
 def test_variance():

@@ -1,5 +1,5 @@
-import py_files.configs.config as cfg
-from py_files.functions import (
+import src.configs.config as cfg
+from src.functions import (
     get_avp_signals,
     get_sin_signal,
     calculate_capon_values,
@@ -9,7 +9,7 @@ from py_files.functions import (
     get_noise,
 )
 import numpy as np
-from py_files.experiment_stats import var_vs_params
+from src.experiments import var_vs_params
 
 
 def test_some_avp_signals():
