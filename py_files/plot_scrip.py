@@ -47,7 +47,7 @@ NAMING_DICT = {
 }
 TYPE_SIGNALS = ["garmonic", "pulse"]
 
-def plot_variance_vs_param(dict_values: dict,
+def plot_mean_vs_param(dict_values: dict,
                            config_params: dict,
                            parametr_name: str,
                            parametr_values: np.ndarray | list,
@@ -137,7 +137,7 @@ def plot_variance_vs_param(dict_values: dict,
     plt.savefig(fname = f"attachment/images/report/{parametr_name}", bbox_inches = 'tight', dpi = 300)
     return fig, ax
 
-def plot_mean_vs_param(dict_values: dict,
+def plot_variance_vs_param(dict_values: dict,
                            config_params: dict,
                            parametr_name: str,
                            parametr_values: np.ndarray | list,
