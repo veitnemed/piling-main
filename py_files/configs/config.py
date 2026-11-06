@@ -20,7 +20,7 @@ NOISE_LEVEL_VALUES = comon.A/np.sqrt(SNR_VALUES)
 RADIUS_VALUES = np.linspace(0.1, 1, 10)
 SDN_VALUES = comon.A / np.sqrt(np.array(SNR_VALUES))
 PHI_VALUES = np.linspace(0,2*np.pi,30, endpoint = True) # Для построения пространства ошибок
-FREQ_VALUES = np.linspace(1,150,10)
+FREQ_VALUES = np.linspace(1,250,10)
 # НА ДАННЫЙ МОМЕНТ ОТНОШЕНИЕ АЛЬФА ПОД ВОПРОСОМ, НУЖНО ЛИ ИМЕННО ЕГО ИССЛЕДОВАТЬ
 # ПОЭТОМУ Я РЕШИЛ ПОКА УБРАТЬ АЛЬФА-ЗАВИСИМОСТЬ 
 #ALPHA_VALUES = np.arange(10,20,1)
