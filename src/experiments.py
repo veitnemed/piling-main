@@ -35,6 +35,7 @@ def single_est(
     return est
 
 
+
 def single_error(est, target_phi):
     """Считаем ошибку оценки по одной ревлизации шума"""
     return (est - target_phi + np.pi) % (2 * np.pi) - np.pi
@@ -76,10 +77,10 @@ def stat_vs_params(
     is_CRN: bool = True):
 
     """Универсальная фанкция для построения зависимость дисперссии от параметра моделирования"""
+    from copy import deepcopy
     result = []
 
-    config_params = config_params.copy()
-    new_config = config_params
+    new_config = deepcopy(config_params)
     for value in parametr_values:
 
         if is_CRN is True:

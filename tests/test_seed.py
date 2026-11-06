@@ -9,7 +9,7 @@ from src.functions import (
     get_noise,
 )
 import numpy as np
-from src.experiments import var_vs_params
+from src.experiments import stat_vs_params
 
 
 def test_some_avp_signals():
@@ -39,14 +39,14 @@ def test_full_experiment():
     config_parametrs2 = cfg.init_rng()
     config_parametrs1["realisation_count"] = 3
     config_parametrs2["realisation_count"] = 3
-    var_barlett_vs_snr1 = var_vs_params(
+    var_barlett_vs_snr1 = stat_vs_params(
         config_params=config_parametrs1,
         energy_func=calculate_barlet_values,
         signal_func=get_sin_signal,
         parametr_name="snr",
         parametr_values=cfg.SNR_VALUES,
     )
-    var_barlett_vs_snr2 = var_vs_params(
+    var_barlett_vs_snr2 = stat_vs_params(
         config_params=config_parametrs2,
         energy_func=calculate_barlet_values,
         signal_func=get_sin_signal,

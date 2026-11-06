@@ -51,7 +51,31 @@ def calculate_fft(signal: np.ndarray):
     fft_centred = np.fft.fftshift(fft_values)
     return fft_centred
 
+def calculate_spectrum_energy(spectrum: np.ndarray):
+    """Сумма мощностей выбранных отсчётов FFT для расчёта SNR."""
+    return np.sum(np.abs(spectrum) ** 2)
 
+def calculate_spectrum_SNR(spectrum_signal,
+                         spectrum_noise,
+                         freq_vector,
+                         f):
+    
+    if (len(spectrum_signal) != len(spectrum_noise)) or (len(spectrum_signal) != len(freq_vector)):
+        raise ValueError("Все входные массивы должны быть одинаковой длины")
+    
+
+    mask = (freq_vector <= -f) | (freq_vector >= f)
+    cut_signal = spectrum_signal[mask]
+
+
+    if len(cut_signal) == 0:
+        raise ValueError("Спектральная составляющая должна содержать хотя бы один отсчёт")
+    
+    cut_noise = spectrum_noise[mask]
+
+    se_signal = calculate_spectrum_energy(cut_signal)
+    se_noise = calculate_spectrum_energy(cut_noise)
+    return se_signal / se_noise 
 def filering_signal(signal: np.ndarray, 
                     bandwidth: float, 
                     fs: float) -> np.ndarray:
@@ -149,12 +173,13 @@ def get_avp_signals(
     rng3 = np.random.default_rng(child_seeds[2])
 
     y0 = p_t + get_noise(config_parametrs, rng1, energy_signal)  # size (1 x N)
+
     y1 = p_t * np.cos(config_parametrs["target_phi"]) + get_noise(
         config_parametrs, rng2, energy_signal
     )
+
     y2 = p_t * np.sin(config_parametrs["target_phi"]) + get_noise(
-        config_parametrs, rng3, energy_signal
-    )
+        config_parametrs, rng3, energy_signal)
 
     return {"y0": y0, "y1": y1, "y2": y2}
 
@@ -185,8 +210,10 @@ def get_channel_matrix(config_params: dict,
 
 
 def get_covariation_matrix(matrix: np.ndarray, N: int) -> np.ndarray:
-    """Рассчёт ковариационной матрицы"""
-    return (matrix @ matrix.T) / N
+    """Универсальный Рассчёт ковариационной матрицы
+    Для комплексных и веш=щественных"""
+
+    return (matrix @ matrix.conj().T) / N
 
 def calculate_complex_stiring_vector(phi: float,
                                      tau_array: np.ndarray, 
