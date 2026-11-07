@@ -3,11 +3,11 @@ from src.functions import (
     get_avp_signals,
     get_sin_signal,
     calculate_capon_values,
-    calculate_barlet_values,
+    calculate_bartlett_values,
     calculate_energy,
     get_impulse_signal,
     get_noise,
-    calculate_stiring_matrix
+    calculate_stiring_matrix,
 )
 import numpy as np
 from src.experiments import stat_vs_params
@@ -40,23 +40,24 @@ def test_full_experiment():
     config_parametrs2 = cfg.init_rng()
     config_parametrs1["realisation_count"] = 3
     config_parametrs2["realisation_count"] = 3
-    var_barlett_vs_snr1 = stat_vs_params(
+    var_bartlettt_vs_snr1 = stat_vs_params(
         config_params=config_parametrs1,
-        energy_func=calculate_barlet_values,
+        energy_func=calculate_bartlett_values,
         signal_func=get_sin_signal,
+        parametr_name="snr",
+        stiring_func=calculate_stiring_matrix,
+        parametr_values=cfg.SNR_VALUES)
         
-        parametr_name="snr",
-        stiring_func= calculate_stiring_matrix,
-        parametr_values=cfg.SNR_VALUES,
-    )
-    var_barlett_vs_snr2 = stat_vs_params(
+
+    var_bartlettt_vs_snr2 = stat_vs_params(
         config_params=config_parametrs2,
-        energy_func=calculate_barlet_values,
+        energy_func=calculate_bartlett_values,
         signal_func=get_sin_signal,
         parametr_name="snr",
+        stiring_func=calculate_stiring_matrix,
         parametr_values=cfg.SNR_VALUES,
     )
-    assert np.array_equal(var_barlett_vs_snr1, var_barlett_vs_snr2)
+    assert np.array_equal(var_bartlettt_vs_snr1, var_bartlettt_vs_snr2)
 
 
 def test_equality_rng():

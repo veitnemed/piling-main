@@ -3,14 +3,12 @@ from numpy.random import Generator
 from .configs import config as cfg
 
 
-def filtering_spectrum(spectrum: np.ndarray, 
-                       bandwidth: float,
-                       fs: float) -> np.ndarray:
+def filtering_spectrum(spectrum: np.ndarray, bandwidth: float, fs: float) -> np.ndarray:
     """Идеальный ФНЧ фильтр
-    Оставляет частотные составляющие в диапазоне от 
+    Оставляет частотные составляющие в диапазоне от
     - bandwidth до bandwidth"""
 
-    local_freq_vector = np.fft.fftshift(np.fft.fftfreq(len(spectrum), d=1/fs))
+    local_freq_vector = np.fft.fftshift(np.fft.fftfreq(len(spectrum), d=1 / fs))
     mask = (local_freq_vector < -bandwidth / 2) | (local_freq_vector > bandwidth / 2)
     spectrum_copy = spectrum.copy()
     spectrum_copy[mask] = 0
@@ -34,11 +32,7 @@ def calculate_f_rms(spectrum: np.ndarray, config_parametrs: dict):
                 y=(config_parametrs["freq_vector"] * np.abs(spectrum)) ** 2,
                 x=config_parametrs["freq_vector"],
             )
-            / (
-                np.trapezoid(
-                    y=np.abs(spectrum) ** 2, x=config_parametrs["freq_vector"]
-                )
-            )
+            / (np.trapezoid(y=np.abs(spectrum) ** 2, x=config_parametrs["freq_vector"]))
         )
     )
 
@@ -51,39 +45,38 @@ def calculate_fft(signal: np.ndarray):
     fft_centred = np.fft.fftshift(fft_values)
     return fft_centred
 
+
 def calculate_spectrum_energy(spectrum: np.ndarray):
     """Сумма мощностей выбранных отсчётов FFT для расчёта SNR."""
     return np.sum(np.abs(spectrum) ** 2)
 
-def calculate_spectrum_SNR(signal,
-                         noise,
-                         freq_vector,
-                         f):
+
+def calculate_spectrum_SNR(signal, noise, freq_vector, f):
 
     spectrum_signal = calculate_fft(signal)
     spectrum_noise = calculate_fft(noise)
 
-    if (len(spectrum_signal) != len(spectrum_noise)) or (len(spectrum_signal) != len(freq_vector)):
+    if (len(spectrum_signal) != len(spectrum_noise)) or (
+        len(spectrum_signal) != len(freq_vector)
+    ):
         raise ValueError("Все входные массивы должны быть одинаковой длины")
-    
 
     mask = np.abs(freq_vector) >= f
     cut_signal = spectrum_signal[mask]
     cut_noise = spectrum_noise[mask]
 
     if len(cut_signal) == 0:
-        raise ValueError("Спектральная составляющая должна содержать хотя бы один отсчёт")
-    
-    
+        raise ValueError(
+            "Спектральная составляющая должна содержать хотя бы один отсчёт"
+        )
 
     se_signal = calculate_spectrum_energy(cut_signal)
     se_noise = calculate_spectrum_energy(cut_noise)
 
-    return se_signal / se_noise 
+    return se_signal / se_noise
 
-def filering_signal(signal: np.ndarray, 
-                    bandwidth: float, 
-                    fs: float) -> np.ndarray:
+
+def filering_signal(signal: np.ndarray, bandwidth: float, fs: float) -> np.ndarray:
     """Фильтрация сигнала"""
     """Принимает сигнал во времнной области и возращает тоже
     во временной (ШИРИНА ФИЛЬТРАЦИИ 2*B) """
@@ -95,10 +88,9 @@ def filering_signal(signal: np.ndarray,
     return back_signal
 
 
-def calculate_99(freq_vector: np.ndarray, 
-                 freq_signal: np.ndarray):
+def calculate_99(freq_vector: np.ndarray, freq_signal: np.ndarray):
     """Рассчёт односторонней ширины спектра при которой сохранеется
-    99% энергии (ШИРИНА ФИЛЬТРАЦИИ 2*B) """
+    99% энергии (ШИРИНА ФИЛЬТРАЦИИ 2*B)"""
 
     power = np.abs(freq_signal) ** 2
     order = np.argsort(np.abs(freq_vector))
@@ -112,7 +104,6 @@ def calculate_99(freq_vector: np.ndarray,
 def calculate_energy(signal: np.ndarray, time_vector: np.ndarray):
     """Рассчёт энергии сигнала на интервале наблюдения от 0 до T"""
     return np.trapezoid(y=signal**2, x=time_vector)
-
 
 
 def calculate_noise_level(
@@ -184,14 +175,15 @@ def get_avp_signals(
     )
 
     y2 = p_t * np.sin(config_parametrs["target_phi"]) + get_noise(
-        config_parametrs, rng3, energy_signal)
+        config_parametrs, rng3, energy_signal
+    )
 
     return {"y0": y0, "y1": y1, "y2": y2}
 
 
-def get_channel_matrix(config_params: dict, 
-                       tau_array: np.ndarray, 
-                       signal_func) -> np.ndarray:
+def get_channel_matrix(
+    config_params: dict, tau_array: np.ndarray, signal_func
+) -> np.ndarray:
     """Функция возращает матрицу 3M x N со значениями для каждого из трёх каналов датчика АВП"""
 
     config_params_copy = config_params.copy()
@@ -220,45 +212,69 @@ def get_covariation_matrix(matrix: np.ndarray, N: int) -> np.ndarray:
 
     return (matrix @ matrix.conj().T) / N
 
-def calculate_complex_stiring_vector(phi: float,
-                                     tau_array: np.ndarray, 
-                                     f0: float,
-                                     M: int) -> np.ndarray:
+
+def calculate_complex_stiring_vector(
+    phi: float, tau_array: np.ndarray, f0: float, M: int
+) -> np.ndarray:
     "Рассчет комплексного стиринг-вектора"
 
-    return np.array([x for i in range(M) 
-                     for x in np.array([1, np.cos(phi), np.sin(phi)])*np.exp(-2j*np.pi*f0*tau_array[i])]).T
+    return np.array(
+        [
+            x
+            for i in range(M)
+            for x in np.array([1, np.cos(phi), np.sin(phi)])
+            * np.exp(-2j * np.pi * f0 * tau_array[i])
+        ]
+    ).T
+
 
 def calculate_complex_stiring_matrix(configs: dict) -> np.ndarray:
     """Рассчёт матрицы стиринг-векторов"""
     res = []
-    
+
     for phi in configs["phis"]:
         config_copy = configs.copy()
         config_copy["target_phi"] = phi
         tau_array = get_tau_array(config_copy)
-        res.append(calculate_complex_stiring_vector(phi, tau_array, configs["f0"], configs["M"]))
+        res.append(
+            calculate_complex_stiring_vector(
+                phi, tau_array, configs["f0"], configs["M"]
+            )
+        )
     return np.array(res)
 
-def calculate_full_barlet_values(W: np.ndarray, 
-                            complex_stiring_matrix: np.ndarray) -> list:
-    """Рассчёт значений энергетического спектра  Барлета"""
-    return np.sum((np.conj(complex_stiring_matrix) @ W) * complex_stiring_matrix, axis=1)
+
+def calculate_full_bartlett_values(
+    W: np.ndarray, complex_stiring_matrix: np.ndarray
+) -> list:
+    """Рассчёт значений энергетического спектра  бартлета"""
+    return np.sum(
+        (np.conj(complex_stiring_matrix) @ W) * complex_stiring_matrix, axis=1
+    )
+
 
 def calculate_stiring_vector(phi: float, M: int) -> np.ndarray:
     """Направляющий вектор"""
     return np.array([1, np.cos(phi), np.sin(phi)] * M).T
 
+
 def calculate_full_capon_values(W: np.ndarray, complex_dir_matrix: np.ndarray) -> list:
     """Рассчёт значений энергетического спектра  Кейпона"""
     W_inv = np.linalg.inv(W)
 
-    return 1 / (np.sum((np.conj(complex_dir_matrix) @ W_inv) * complex_dir_matrix, axis=1))
+    return 1 / (
+        np.sum((np.conj(complex_dir_matrix) @ W_inv) * complex_dir_matrix, axis=1)
+    )
+
 
 def calculate_stiring_matrix(config_params: dict):
     """Рассчёт матрицы направляющих векторов"""
-    return np.array([calculate_stiring_vector(phi, config_params["M"]) for phi in config_params["phis"]])
-
+    return np.array(
+        [
+            calculate_stiring_vector(phi, config_params["M"])
+            for phi in config_params["phis"]
+        ]
+    )
 
 
 def calculate_capon_values(W: np.ndarray, dir_matrix: np.ndarray) -> list:
@@ -269,10 +285,10 @@ def calculate_capon_values(W: np.ndarray, dir_matrix: np.ndarray) -> list:
 
 
 def get_est_phi(phi_vector: np.ndarray, e_values: np.ndarray) -> float:
-    """Определяем угол по максимум аргумента Барлета"""
+    """Определяем угол по максимум аргумента бартлета"""
     return phi_vector[np.argmax(e_values)]
 
 
-def calculate_barlet_values(W: np.ndarray, dir_matrix: np.ndarray) -> list:
-    """Рассчёт значений энергетического спектра  Барлета"""
+def calculate_bartlett_values(W: np.ndarray, dir_matrix: np.ndarray) -> list:
+    """Рассчёт значений энергетического спектра  бартлета"""
     return np.sum((dir_matrix @ W) * dir_matrix, axis=1)

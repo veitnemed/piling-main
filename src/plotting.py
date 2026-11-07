@@ -23,7 +23,7 @@ LABELS_DICT = {
     "snr": "SNR (c/ш)",
     "M": "количества датчиков",
     "R": "радиуса решетки",
-    "phis": r"$\varphi_0$",
+    "target_phi": r"$\varphi_0$",
     "f0": r"$f_{0}$, Гц",
     # "alpha": r"$\alpha = \frac{\lambda}{2R} $",
 }
@@ -31,7 +31,7 @@ XLABELS_DICT = {
     "snr": "SNR (c/ш)",
     "M": "M (кол-во датчиков), шт",
     "R": "R (радиус решётки АВП), м",
-    "phis": r"$\varphi_0, град$",
+    "target_phi": r"$\varphi_0, град$",
     "f0": r" Частота сигнала $f_{0}$, Гц",
     # "alpha": r"$\alpha = \frac{\lambda}{2R} $",
 }
@@ -39,7 +39,7 @@ NAMING_DICT = {
     "snr": "SNR",
     "M": "M",
     "R": "R",
-    "phis": r"$\varphi_0$",
+    "target_phi": r"$\varphi_0$",
     "f0": "f0",
     # "alpha": r"$\alpha$",
 }
@@ -63,7 +63,7 @@ def plot_mean_vs_param(
 
     fig, ax = plt.subplots(1, 1, figsize=(14, 11))
     fig.subplots_adjust(top=0.88, bottom=0.45)
-    if parametr_name == "phis":
+    if parametr_name == "target_phi":
         parametr_values = np.degrees(parametr_values)
 
     info_for_plots = []
@@ -189,7 +189,7 @@ def plot_variance_vs_param(
 
     fig, ax = plt.subplots(1, 1, figsize=(14, 11))
     fig.subplots_adjust(top=0.88, bottom=0.45)
-    if parametr_name == "phis":
+    if parametr_name == "target_phi":
         parametr_values = np.degrees(parametr_values)
 
     info_for_plots = []
@@ -367,3 +367,58 @@ def create_config_table(
     bbox = table.get_window_extent(fig.canvas.get_renderer())
     bbox = bbox.transformed(fig.dpi_scale_trans.inverted())
     plt.show()
+
+def show_geometry_avp(configs: dict):
+    """Строит геометрическое приближение модели"""
+
+    from src.functions import get_gamma_array, get_tau_array
+    r = configs["R"]
+
+    x = r*np.sin(2*np.pi*configs["time_vector"])    
+    y = r*np.cos(2*np.pi*configs["time_vector"])
+  
+    gamma_arr = get_gamma_array(configs["M"])
+    tau_arr = list(get_tau_array(configs)*1e3) # Микросекунды
+    tau_mks = [ round(float(tau),1) for tau in tau_arr]
+
+    fig, ax = plt.subplots(1,1,figsize = (12,12))
+
+    ax.plot(x,y, linestyle = "-", color = "black")
+    ax.grid(False)
+    ax.set_xlim(-1.65*r, 1.65*r)
+    ax.set_ylim(-1.65*r, 1.65*r)
+
+    ax.axline((0,0), (1,0), color = "black", linestyle = "-")
+    ax.plot(0,0, marker = "o",  markersize=10, color='black')
+
+
+    d = r/12
+    for idx, value in enumerate(gamma_arr):
+
+    
+        x1 = r*np.cos(value); y1 = r*np.sin(value)
+        ax.plot(x1,y1, marker = "o",  markersize=10, color='blue')
+        ax.set_title("Геометрия АВП текущей конфигурауии", fontsize=15)
+        plt.text(x1+d/2, y1+d/2, rf"$M_{{{idx+1}}}$", fontsize=15, color='black')
+        v = int(value*(180/np.pi))
+        plt.text(x1 + 2.8*d, y1+1.5*d, rf"$\gamma_{idx+1}$ = ${v}^o$"+"\n"+fr"$\tau_{idx+1}$ = {tau_mks[idx]} мкс", fontsize=9, color="black",bbox= {
+            "facecolor": "white",  # Белый цвет фона
+            "edgecolor": "black",  # Без рамки вокруг текста (или 'black' для рамки)
+            "boxstyle": "round,pad=0.5",  # Скругленные углы и отступы вокруг текста
+            "alpha": 0.65,  # Прозрачность фона (1.0 — полностью непрозрачный)
+        },)
+
+    x2 = r*np.cos(configs["target_phi"]); y2 = r*np.sin(configs["target_phi"])
+    x3 = r*np.cos(3.3); y3 = r*np.sin(3.3)
+    x4 = 0.5*r*np.cos(3.3); y4 = 0.5*r*np.sin(3.3) - d
+    plt.text(0, -0.15*r, 'O', fontsize=20, color='black')
+    ax.plot(x2*1.6, y2*1.6, marker = "o", markersize=15, color='black',)
+    ax.text(x2*1.6, y2*1.52+2*d, rf"Источник (${(configs["target_phi"]*180/np.pi):.0f}^o$)", fontsize  = 14,  color = "black")
+    ax.plot([0,x2*1.6], [0,y2*1.6], color='purple', linestyle = "--", linewidth=2)
+    ax.plot([0,x3], [0,y3], color='black', linestyle = "-", linewidth=1.5)
+    ax.plot(x3,y3, marker = "o",  markersize=8, color='black')
+    ax.text(x4, y4, f"R = {r:.1f}", fontsize  = 12,  color = "black")
+    ax.set_ylim(-1.7*r, 1.7*r)
+    plt.gca().set_aspect('equal', adjustable='box')
+
+
