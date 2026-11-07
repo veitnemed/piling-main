@@ -55,27 +55,32 @@ def calculate_spectrum_energy(spectrum: np.ndarray):
     """Сумма мощностей выбранных отсчётов FFT для расчёта SNR."""
     return np.sum(np.abs(spectrum) ** 2)
 
-def calculate_spectrum_SNR(spectrum_signal,
-                         spectrum_noise,
+def calculate_spectrum_SNR(signal,
+                         noise,
                          freq_vector,
                          f):
-    
+
+    spectrum_signal = calculate_fft(signal)
+    spectrum_noise = calculate_fft(noise)
+
     if (len(spectrum_signal) != len(spectrum_noise)) or (len(spectrum_signal) != len(freq_vector)):
         raise ValueError("Все входные массивы должны быть одинаковой длины")
     
 
-    mask = (freq_vector <= -f) | (freq_vector >= f)
+    mask = np.abs(freq_vector) >= f
     cut_signal = spectrum_signal[mask]
-
+    cut_noise = spectrum_noise[mask]
 
     if len(cut_signal) == 0:
         raise ValueError("Спектральная составляющая должна содержать хотя бы один отсчёт")
     
-    cut_noise = spectrum_noise[mask]
+    
 
     se_signal = calculate_spectrum_energy(cut_signal)
     se_noise = calculate_spectrum_energy(cut_noise)
+
     return se_signal / se_noise 
+
 def filering_signal(signal: np.ndarray, 
                     bandwidth: float, 
                     fs: float) -> np.ndarray:

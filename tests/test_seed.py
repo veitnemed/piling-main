@@ -7,6 +7,7 @@ from src.functions import (
     calculate_energy,
     get_impulse_signal,
     get_noise,
+    calculate_stiring_matrix
 )
 import numpy as np
 from src.experiments import stat_vs_params
@@ -43,7 +44,9 @@ def test_full_experiment():
         config_params=config_parametrs1,
         energy_func=calculate_barlet_values,
         signal_func=get_sin_signal,
+        
         parametr_name="snr",
+        stiring_func= calculate_stiring_matrix,
         parametr_values=cfg.SNR_VALUES,
     )
     var_barlett_vs_snr2 = stat_vs_params(
