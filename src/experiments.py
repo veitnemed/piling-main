@@ -74,13 +74,15 @@ def stat_vs_params(
     parametr_values: np.ndarray | list,
     stat_func: Callable = calculate_variance,
     is_CRN: bool = True,
+    is_random_start: bool = False
+
 ):
     """Расчёт статистики ошибки для набора значений параметра моделирования."""
     from copy import deepcopy
 
     result = []
-
-    new_config = deepcopy(config_params)
+    new_config = cfg.shake_rng(config_params) if is_random_start is True else deepcopy(config_params)
+    
     for value in parametr_values:
 
         if is_CRN is True:

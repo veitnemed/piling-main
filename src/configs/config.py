@@ -78,3 +78,11 @@ def restart_rng(config_parametrs: dict) -> dict:
     new_config["main_rng"] = np.random.default_rng(new_config["main_seed"])
     return new_config
 
+def shake_rng(config_parametrs: dict) -> dict:
+    """Случайное значение генератора"""
+    import copy
+    new_config = copy.deepcopy(config_parametrs)
+    new_config["main_seed"] = None
+    new_config["main_rng"] = np.random.default_rng(new_config["main_seed"])
+    return new_config
+

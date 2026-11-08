@@ -17,8 +17,9 @@ PI_AXIS = {
         r"$2\pi$",
     ],
 }
-COLORS = ["red", "green", "blue"]
-LINES = ["-", "--", "-.", ":"]
+COLORS = ("red", "green", "blue")
+LINES = ("-", "--", "-.", ":")
+MARKERS = ["o", "s", "D", "x"]
 LABELS_DICT = {
     "snr": "SNR",
     "M": "sensor count",
@@ -85,6 +86,7 @@ def plot_mean_vs_param(
             label=method,
             linestyle=LINES[idx % len(LINES)],
             linewidth=3,
+            marker = MARKERS[idx % len(MARKERS)]
         )
 
     ax.set_xlabel(XLABELS_DICT[parametr_name], fontsize=18)
@@ -209,6 +211,7 @@ def plot_variance_vs_param(
             label=method,
             linestyle=LINES[idx % len(LINES)],
             linewidth=3,
+            marker = MARKERS[idx % len(MARKERS)]
         )
 
     ax.set_xlabel(XLABELS_DICT[parametr_name], fontsize=18)
