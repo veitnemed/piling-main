@@ -20,19 +20,19 @@ PI_AXIS = {
 COLORS = ["red", "green", "blue"]
 LINES = ["-", "--", "-.", ":"]
 LABELS_DICT = {
-    "snr": "SNR (c/ш)",
-    "M": "количества Sensorов",
-    "R": "радиуса решетки",
-    "target_phi": r"$\varphi_0$",
-    "f0": r"$f_{0}$, Hz",
+    "snr": "SNR",
+    "M": "sensor count",
+    "R": "array radius",
+    "target_phi": r"source azimuth $\varphi_0$",
+    "f0": r"signal frequency $f_0$",
     # "alpha": r"$\alpha = \frac{\lambda}{2R} $",
 }
 XLABELS_DICT = {
-    "snr": "SNR (c/ш)",
-    "M": "M (кол-во Sensorов), шт",
-    "R": "R (радиус решётки AVS), м",
-    "target_phi": r"$\varphi_0, град$",
-    "f0": r" Signal frequency $f_{0}$, Hz",
+    "snr": "SNR (linear)",
+    "M": "Sensor count $M$",
+    "R": "Array radius $R$, m",
+    "target_phi": r"Source azimuth $\varphi_0$, deg",
+    "f0": r"Signal frequency $f_0$, Hz",
     # "alpha": r"$\alpha = \frac{\lambda}{2R} $",
 }
 NAMING_DICT = {
@@ -55,11 +55,10 @@ def plot_mean_vs_param(
     xlim: tuple = None,
     ylim: tuple = None,
     y_label: str = r"$\mathbb{E}[\varepsilon]$",
-    y_size: str = r", $град$",
+    y_size: str = ", deg",
     type_signal: str = None,
 ):
-    """Функция строит график зависимости дисперсии оценки от параметра моделирования
-    для неstandart divationльких методов"""
+    """График среднего значения ошибки оценки для нескольких методов."""
 
     fig, ax = plt.subplots(1, 1, figsize=(14, 11))
     fig.subplots_adjust(top=0.88, bottom=0.45)
@@ -92,7 +91,7 @@ def plot_mean_vs_param(
     ax.set_ylabel(y_label + y_size, fontsize=18)
 
     fig.suptitle(
-        "The dependence of " + y_label + f" on {LABELS_DICT[parametr_name]}",
+        "Mean bearing error " + y_label + f" vs. {LABELS_DICT[parametr_name]}",
         y=0.94,
         va="center",
         fontfamily="Times New Roman",
@@ -106,29 +105,29 @@ def plot_mean_vs_param(
     if xlim is not None:
         ax.set_xlim([value if value is not None else None for value in xlim])
     ax.legend(fontsize=15)
-    # parametrs под графиком
+    # Параметры под графиком.
     methods = ", ".join(dict_values)
     info = ""
     if type_signal is not None:
-        info += f"Type signal:: {type_signal}\n"
+        info += f"Signal type: {type_signal.replace('garmonic', 'harmonic')}\n"
 
     if type_signal == "garmonic":
         info += f"Signal frequency: {config_params['f0']} Hz\n"
 
     if parametr_name != "R":
-        info += f"Радиус решётки: {config_params['R']:.2f} м\n"
+        info += f"Array radius: {config_params['R']:.2f} m\n"
     if parametr_name != "M":
-        info += f"Количество Sensorов: {config_params['M']} шт.\n"
+        info += f"Sensor count: {config_params['M']}\n"
     if parametr_name != "snr":
-        info += f"SNR: {config_params['snr']} (С/Ш)\n"
+        info += f"SNR: {config_params['snr']} (linear)\n"
     info += (
-        f"{NAMING_DICT[parametr_name]} от {parametr_values[0]:.2f} "
-        f"до {parametr_values[-1]:.2f} ({len(parametr_values)} точек)\n"
+        f"{NAMING_DICT[parametr_name]}: {parametr_values[0]:.2f} "
+        f"to {parametr_values[-1]:.2f} ({len(parametr_values)} points)\n"
     )
-    info += f"Количество проверенных углов: {len(config_params['phis'])}\n"
-    info += f"Количество реализаций noise: {config_params['realisation_count']}\n"
-    info += f"SEED: {config_params['main_seed']}\n"
-    info += f"Время расчёта: {delta_time:.2f} сек."
+    info += f"Search angles: {len(config_params['phis'])}\n"
+    info += f"Noise realizations: {config_params['realisation_count']}\n"
+    info += f"Seed: {config_params['main_seed']}\n"
+    info += f"Computation time: {delta_time:.2f} s"
 
     ax.text(
         0,
@@ -147,7 +146,7 @@ def plot_mean_vs_param(
         info2 += (
             info_obj["method"]
             + ":\n"
-            + f"Max: {info_obj["stats"]["Max"]:.3f} град \nMin: {info_obj["stats"]["Min"]:.3f} град\nAvg: {info_obj["stats"]["Mean"]:.3f} град\n"
+            + f"Max: {info_obj["stats"]["Max"]:.3f} deg\nMin: {info_obj["stats"]["Min"]:.3f} deg\nMean: {info_obj["stats"]["Mean"]:.3f} deg\n"
         )
 
     ax.text(
@@ -180,11 +179,10 @@ def plot_variance_vs_param(
     xlim: tuple = None,
     ylim: tuple = None,
     y_label: str = r"$s_{\varepsilon}^{2}$",
-    y_size: str = r", $град^2$",
+    y_size: str = r", deg$^2$",
     type_signal: str = None,
 ):
-    """Функция строит график зависимости дисперсии оценки от параметра моделирования
-    для неstandart divationльких методов"""
+    """График дисперсии ошибки оценки для нескольких методов."""
 
     fig, ax = plt.subplots(1, 1, figsize=(14, 11))
     fig.subplots_adjust(top=0.88, bottom=0.45)
@@ -217,7 +215,7 @@ def plot_variance_vs_param(
     ax.set_ylabel(y_label + y_size, fontsize=18)
 
     fig.suptitle(
-        "The dependence of " + y_label + f" on {LABELS_DICT[parametr_name]}",
+        "Bearing error variance " + y_label + f" vs. {LABELS_DICT[parametr_name]}",
         y=0.94,
         va="center",
         fontfamily="Times New Roman",
@@ -234,29 +232,29 @@ def plot_variance_vs_param(
     if xlim is not None:
         ax.set_xlim([value if value is not None else None for value in xlim])
     ax.legend(fontsize=15)
-    # parametrs под графиком
+    # Параметры под графиком.
     methods = ", ".join(dict_values)
     info = ""
     if type_signal is not None:
-        info += f"Type signal:: {type_signal}\n"
+        info += f"Signal type: {type_signal.replace('garmonic', 'harmonic')}\n"
 
     if type_signal == "garmonic":
         info += f"Signal frequency: {config_params['f0']} Hz\n"
 
     if parametr_name != "R":
-        info += f"Radius array: {config_params['R']:.2f} m\n"
+        info += f"Array radius: {config_params['R']:.2f} m\n"
     if parametr_name != "M":
-        info += f"Sensor count: {config_params['M']} \n"
+        info += f"Sensor count: {config_params['M']}\n"
     if parametr_name != "snr":
-        info += f"SNR: {config_params['snr']} (linear scale)\n"
+        info += f"SNR: {config_params['snr']} (linear)\n"
     info += (
-        f"{NAMING_DICT[parametr_name]} от {parametr_values[0]:.2f} "
-        f"до {parametr_values[-1]:.2f} ({len(parametr_values)} points)\n"
+        f"{NAMING_DICT[parametr_name]}: {parametr_values[0]:.2f} "
+        f"to {parametr_values[-1]:.2f} ({len(parametr_values)} points)\n"
     )
-    info += f"Number of checked angles : {len(config_params['phis'])}\n"
+    info += f"Search angles: {len(config_params['phis'])}\n"
     info += f"Noise realizations: {config_params['realisation_count']}\n"
-    info += f"SEED: {config_params['main_seed']}\n"
-    info += f"Compution time {delta_time:.2f} сек."
+    info += f"Seed: {config_params['main_seed']}\n"
+    info += f"Computation time: {delta_time:.2f} s"
 
     ax.text(
         0,
@@ -275,7 +273,7 @@ def plot_variance_vs_param(
         info2 += (
             info_obj["method"]
             + ":\n"
-            + f"Max: {info_obj["stats"]["Max"]:.3f} град^2 \nMin: {info_obj["stats"]["Min"]:.3f} град^2\nAvg: {info_obj["stats"]["Mean"]:.3f} град^2\n"
+            + f"Max: {info_obj["stats"]["Max"]:.3f} deg²\nMin: {info_obj["stats"]["Min"]:.3f} deg²\nMean: {info_obj["stats"]["Mean"]:.3f} deg²\n"
         )
 
     ax.text(
@@ -338,7 +336,7 @@ def create_config_table(
         """Округление числа до n значящих цифр"""
         return round(number, int(np.log10(1 / number)) + k)
 
-    columns = ["Parametr", "Value"]
+    columns = ["Parameter", "Value"]
     rows = [
         [key, round_n(value, 2)]
         for key, value in sorted(config_params.items())
@@ -371,7 +369,7 @@ def create_config_table(
 
 
 def show_geometry_avp(configs: dict):
-    """Строит геометричеstandart divationе приближение модели"""
+    """Построение геометрии акустической векторной решётки."""
 
     from src.functions import get_gamma_array, get_tau_array
 
@@ -381,7 +379,7 @@ def show_geometry_avp(configs: dict):
     y = r * np.cos(2 * np.pi * configs["time_vector"])
 
     gamma_arr = get_gamma_array(configs["M"])
-    tau_arr = list(get_tau_array(configs) * 1e3)  # Микросекунды
+    tau_arr = list(get_tau_array(configs) * 1e3)  # Миллисекунды.
     tau_mks = [round(float(tau), 1) for tau in tau_arr]
 
     fig, ax = plt.subplots(1, 1, figsize=(12, 12))
@@ -400,7 +398,7 @@ def show_geometry_avp(configs: dict):
         x1 = r * np.cos(value)
         y1 = r * np.sin(value)
         ax.plot(x1, y1, marker="o", markersize=10, color="blue")
-        ax.set_title("Geometry array this configurayion", fontsize=15)
+        ax.set_title("AVS array geometry", fontsize=15)
         plt.text(
             x1 + d / 2, y1 + d / 2, rf"$M_{{{idx+1}}}$", fontsize=15, color="black"
         )
@@ -408,9 +406,9 @@ def show_geometry_avp(configs: dict):
         plt.text(
             x1 + 2.8 * d,
             y1 + 1.5 * d,
-            rf"$\gamma_{idx+1}$ = ${v}^o$"
+            rf"$\gamma_{idx+1}$ = ${v}^\circ$"
             + "\n"
-            + rf"$\tau_{idx+1}$ = {tau_mks[idx]} mks",
+            + rf"$\tau_{idx+1}$ = {tau_mks[idx]} ms",
             fontsize=9,
             color="black",
             bbox={
@@ -438,7 +436,7 @@ def show_geometry_avp(configs: dict):
     ax.text(
         x2 * 1.6,
         y2 * 1.52 + 2 * d,
-        rf"Источник (${(configs["target_phi"]*180/np.pi):.0f}^o$)",
+        rf"Source (${(configs["target_phi"]*180/np.pi):.0f}^\circ$)",
         fontsize=14,
         color="black",
     )

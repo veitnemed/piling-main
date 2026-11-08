@@ -2,7 +2,7 @@ import numpy as np
 import src.configs.comon as comon
 
 
-# ========== VECTORS =============
+# ========== ВЕКТОРЫ =============
 # ================================
 
 TIME_VECTOR = np.arange(comon.N)*comon.DT #ВЕКТОР ВРЕМЕНИ
@@ -10,7 +10,7 @@ FREQ_VECTOR = np.fft.fftshift(np.fft.fftfreq(comon.N, d=1/comon.FS))
 PHI_VECTOR = np.linspace(0, 2*np.pi, comon.AMOUNT_PHI, endpoint= False) # Значения угла от 0 до 2П
 
 
-# ========== VALUES =============
+# ========== ЗНАЧЕНИЯ =============
 # ===============================
 
 SENSOR_VALUES = [1, 5, 7, 10, 12, 15, 17, 20]
@@ -27,7 +27,7 @@ FREQ_VALUES = np.linspace(1,250,25)
 #ALPHA_RMS_VALUES = np.arange(10,20,1)
 
 
-# ========== CONFIGURATION =======
+# ========== КОНФИГУРАЦИЯ =======
 # ================================
 
 def create_parameters_config() -> dict:
@@ -61,7 +61,7 @@ def create_parameters_config() -> dict:
     }
 
 
-# ========== INIT =======
+# ========== ИНИЦИАЛИЗАЦИЯ =======
 # ========================
 def init_rng(main_seed: int = comon.GLOBAL_SEED):
     """Инциализация стартового конфига"""

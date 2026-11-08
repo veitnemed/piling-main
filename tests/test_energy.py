@@ -5,10 +5,10 @@ import src.configs.comon as comon
 
 
 def test_rectangular_pulse_energy():
-    """Тестируем энергию signalа, проверяем с аналитичеstandart divationй формулой"""
+    """Сравнение энергии сигнала с аналитической формулой."""
     A = 2  # Амплитуда
-    t_0 = comon.DURATION_ALL / 2  # center pulseА (например, в точке t = 2)
-    tau = comon.DURATION_ALL / 10  # Полная длительность pulseа (ширина)
+    t_0 = comon.DURATION_ALL / 2  # Центр импульса.
+    tau = comon.DURATION_ALL / 10  # Полная длительность импульса.
     pulse = np.where(
         (cfg.TIME_VECTOR >= t_0 - tau / 2) & (cfg.TIME_VECTOR <= t_0 + tau / 2), A, 0.0
     )

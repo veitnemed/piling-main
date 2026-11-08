@@ -4,9 +4,9 @@ from .configs import config as cfg
 
 
 def filtering_spectrum(spectrum: np.ndarray, bandwidth: float, fs: float) -> np.ndarray:
-    """Идеальный low-pass filter фильтр
-    Оставляет частотные составляющие в диапазоне от
-    - bandwidth до bandwidth"""
+    """Идеальный фильтр нижних частот.
+    Оставляет составляющие в диапазоне от -bandwidth/2 до bandwidth/2.
+    """
 
     local_freq_vector = np.fft.fftshift(np.fft.fftfreq(len(spectrum), d=1 / fs))
     mask = (local_freq_vector < -bandwidth / 2) | (local_freq_vector > bandwidth / 2)
@@ -16,8 +16,7 @@ def filtering_spectrum(spectrum: np.ndarray, bandwidth: float, fs: float) -> np.
 
 
 def calculate_ifft(spectrum: np.ndarray) -> np.ndarray:
-    """Обратное преобразование фурье во временную область
-    S(f) [компелексный] -> s(t)"""
+    """Обратное преобразование Фурье: комплексный спектр S(f) -> сигнал s(t)."""
 
     fft_back = np.fft.ifftshift(spectrum)
     complex_signal_back = np.fft.ifft(fft_back)
@@ -25,7 +24,7 @@ def calculate_ifft(spectrum: np.ndarray) -> np.ndarray:
 
 
 def calculate_f_rms(spectrum: np.ndarray, config_parametrs: dict):
-    "Рассчёт среднеквадратичеstandart divationй эффективной частоты"
+    "Расчёт среднеквадратической эффективной частоты."
     return np.abs(
         np.sqrt(
             np.trapezoid(
@@ -38,8 +37,7 @@ def calculate_f_rms(spectrum: np.ndarray, config_parametrs: dict):
 
 
 def calculate_fft(signal: np.ndarray):
-    """Вычиление комплексного амплитудного spectrumа (БПФ) без модуля
-    s(t) -> S(f) [комплексныый]"""
+    """Вычисление комплексного амплитудного спектра с помощью БПФ."""
 
     fft_values = np.fft.fft(signal)
     fft_centred = np.fft.fftshift(fft_values)
@@ -47,7 +45,7 @@ def calculate_fft(signal: np.ndarray):
 
 
 def calculate_spectrum_energy(spectrum: np.ndarray):
-    """Сумма мощностей выбранных отсчётов FFT для расчёта SNR."""
+    """Сумма мощностей выбранных отсчётов БПФ для расчёта SNR."""
     return np.sum(np.abs(spectrum) ** 2)
 
 
@@ -67,7 +65,7 @@ def calculate_spectrum_SNR(signal, noise, freq_vector, f):
 
     if len(cut_signal) == 0:
         raise ValueError(
-            "spectrumальная составляющая должна содержать хотя бы один отсчёт"
+            "Спектральная составляющая должна содержать хотя бы один отсчёт"
         )
 
     se_signal = calculate_spectrum_energy(cut_signal)
@@ -77,9 +75,7 @@ def calculate_spectrum_SNR(signal, noise, freq_vector, f):
 
 
 def filering_signal(signal: np.ndarray, bandwidth: float, fs: float) -> np.ndarray:
-    """Фильтрация signalа"""
-    """Принимает signal во времнной области и возращает тоже
-    во временной (ШИРИНА ФИЛЬТРАЦИИ 2*B) """
+    """Фильтрация сигнала во временной области с заданной шириной полосы."""
 
     freq_signal = calculate_fft(signal)
     filt_freq_signal = filtering_spectrum(freq_signal, bandwidth, fs)
@@ -89,8 +85,9 @@ def filering_signal(signal: np.ndarray, bandwidth: float, fs: float) -> np.ndarr
 
 
 def calculate_99(freq_vector: np.ndarray, freq_signal: np.ndarray):
-    """Рассчёт односторонней ширины spectrumа при которой сохранеется
-    99% энергии (ШИРИНА ФИЛЬТРАЦИИ 2*B)"""
+    """Расчёт односторонней ширины спектра, сохраняющей 99 % энергии.
+    Полная ширина полосы фильтрации равна 2*B.
+    """
 
     power = np.abs(freq_signal) ** 2
     order = np.argsort(np.abs(freq_vector))
@@ -102,20 +99,20 @@ def calculate_99(freq_vector: np.ndarray, freq_signal: np.ndarray):
 
 
 def calculate_energy(signal: np.ndarray, time_vector: np.ndarray):
-    """Рассчёт энергии signalа на интервале наблюдения от 0 до T"""
+    """Расчёт энергии сигнала на интервале наблюдения от 0 до T."""
     return np.trapezoid(y=signal**2, x=time_vector)
 
 
 def calculate_noise_level(
     energy_signal: np.ndarray, snr: float, duration_all: np.ndarray
 ):
-    """Рассчёт SD noise из опредения SNR: отношения энергии signalа к средней энергии noise"""
+    """Расчёт СКО шума из отношения энергии сигнала к средней энергии шума."""
 
     return np.sqrt(energy_signal / (duration_all * snr))
 
 
 def get_noise(config_parametrs, rng: Generator, energy_signal: float) -> np.ndarray:
-    """Генрация АЬГШ с мат ожиданием 0"""
+    """Генерация аддитивного белого гауссовского шума с нулевым средним."""
 
     noise_level = calculate_noise_level(
         energy_signal, config_parametrs["snr"], config_parametrs["duration_all"]
@@ -124,15 +121,13 @@ def get_noise(config_parametrs, rng: Generator, energy_signal: float) -> np.ndar
 
 
 def get_gamma_array(SENSOR_AMOUNT: int) -> np.ndarray:
-    """Рассчет углов Sensorов относительно оси x
-    Функция принимает на вход число Sensorов и возвращает
-    массив углов для каждого Sensorа"""
+    """Расчёт углов датчиков относительно оси x по их количеству."""
 
     return (2 * np.pi / SENSOR_AMOUNT) * np.arange(SENSOR_AMOUNT)
 
 
 def get_tau_array(config_parametrs: dict) -> np.ndarray:
-    """Рассчёт задержек относительно каждого Sensorа"""
+    """Расчёт задержек относительно каждого датчика."""
 
     return (config_parametrs["R"] / config_parametrs["c"]) * np.cos(
         config_parametrs["target_phi"] - get_gamma_array(config_parametrs["M"])
@@ -140,7 +135,7 @@ def get_tau_array(config_parametrs: dict) -> np.ndarray:
 
 
 def get_impulse_signal(config_params: dict) -> np.ndarray:
-    """Тут используется приблтжение чтобы у функций был один"""
+    """Расчёт импульса Лоренца по заданным параметрам."""
     tau = config_params["duration_pulse"]
     return (
         config_params["A"]
@@ -150,7 +145,7 @@ def get_impulse_signal(config_params: dict) -> np.ndarray:
 
 
 def get_sin_signal(config_params: dict) -> np.ndarray:
-    """Считаем значение гармончиеstandart divationго signalа в каждый момент времени"""
+    """Расчёт гармонического сигнала в каждый момент времени."""
 
     return config_params["A"] * np.sin(
         config_params["time_vector"] * (2 * np.pi * config_params["f0"])
@@ -160,7 +155,7 @@ def get_sin_signal(config_params: dict) -> np.ndarray:
 def get_avp_signals(
     p_t: np.ndarray, config_parametrs: dict, energy_signal: float
 ) -> dict:
-    """Рассчёт значений каналов y0 y1 y2 для AVS"""
+    """Расчёт значений каналов y0, y1, y2 для АВП."""
 
     child_seeds = config_parametrs["main_rng"].bit_generator.seed_seq.spawn(3)
 
@@ -168,7 +163,7 @@ def get_avp_signals(
     rng2 = np.random.default_rng(child_seeds[1])
     rng3 = np.random.default_rng(child_seeds[2])
 
-    y0 = p_t + get_noise(config_parametrs, rng1, energy_signal)  # size (1 x N)
+    y0 = p_t + get_noise(config_parametrs, rng1, energy_signal)  # Размер 1 x N.
 
     y1 = p_t * np.cos(config_parametrs["target_phi"]) + get_noise(
         config_parametrs, rng2, energy_signal
@@ -184,16 +179,15 @@ def get_avp_signals(
 def get_channel_matrix(
     config_params: dict, tau_array: np.ndarray, signal_func
 ) -> np.ndarray:
-    """Функция возращает матрицу 3M x N со значениями для каждого из трёх каналов Sensorа AVS"""
+    """Матрица 3M x N для трёх каналов каждого датчика АВП."""
 
     config_params_copy = config_params.copy()
     channel_matrix = np.zeros(
         (3 * config_params_copy["M"], config_params_copy["N"])
-    )  # Создаём нулевую матрицу размера M x N
+    )  # Создаём нулевую матрицу размера 3M x N.
 
     for idx, tau in enumerate(tau_array):
-        """На каждой итерации для текущей кофигурации присваем параметру time_vector  - исодный
-        time минус текущий тау"""
+        """Сдвигаем временной вектор на задержку текущего датчика."""
 
         config_params_copy["time_vector"] = config_params["time_vector"] - tau
         p_t = signal_func(config_params_copy)
@@ -207,8 +201,7 @@ def get_channel_matrix(
 
 
 def get_covariation_matrix(matrix: np.ndarray, N: int) -> np.ndarray:
-    """Универсальный Рассчёт ковариационной матрицы
-    Для комплексных и веш=щественных"""
+    """Расчёт ковариационной матрицы для комплексных и вещественных данных."""
 
     return (matrix @ matrix.conj().T) / N
 
@@ -247,7 +240,7 @@ def calculate_complex_stiring_matrix(configs: dict) -> np.ndarray:
 def calculate_full_bartlett_values(
     W: np.ndarray, complex_stiring_matrix: np.ndarray
 ) -> list:
-    """Рассчёт значений энергетичеstandart divationго spectrumа  бартлета"""
+    """Расчёт энергетического спектра Бартлетта с комплексным вектором."""
     return np.sum(
         (np.conj(complex_stiring_matrix) @ W) * complex_stiring_matrix, axis=1
     )
@@ -259,7 +252,7 @@ def calculate_stiring_vector(phi: float, M: int) -> np.ndarray:
 
 
 def calculate_full_capon_values(W: np.ndarray, complex_dir_matrix: np.ndarray) -> list:
-    """Рассчёт значений энергетичеstandart divationго spectrumа  Caponа"""
+    """Расчёт энергетического спектра Кейпона с комплексным вектором."""
     W_inv = np.linalg.pinv(W)
 
     return 1 / (
@@ -278,7 +271,7 @@ def calculate_stiring_matrix(config_params: dict):
 
 
 def calculate_capon_values(W: np.ndarray, dir_matrix: np.ndarray) -> list:
-    """Рассчёт значений энергетичеstandart divationго spectrumа  Caponа"""
+    """Расчёт энергетического спектра Кейпона."""
     W_inv = np.linalg.inv(W)
 
     return 1 / (np.sum((dir_matrix @ W_inv) * dir_matrix, axis=1))
@@ -290,5 +283,5 @@ def get_est_phi(phi_vector: np.ndarray, e_values: np.ndarray) -> float:
 
 
 def calculate_bartlett_values(W: np.ndarray, dir_matrix: np.ndarray) -> list:
-    """Рассчёт значений энергетичеstandart divationго spectrumа  бартлета"""
+    """Расчёт энергетического спектра Бартлетта."""
     return np.sum((dir_matrix @ W) * dir_matrix, axis=1)

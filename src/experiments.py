@@ -19,7 +19,7 @@ from src.functions import (
 def single_est(
     config_params: dict, dir_matrix: np.ndarray, target_func: Callable, signal_func
 ) -> float:
-    """Считаем оценку по одной ревлизации noise"""
+    """Расчёт оценки по одной реализации шума."""
 
     tau_array = get_tau_array(config_params)
     channel_matrix = get_channel_matrix(
@@ -32,7 +32,7 @@ def single_est(
 
 
 def single_error(est, target_phi):
-    """Считаем ошибку оценки по одной ревлизации noise"""
+    """Расчёт ошибки оценки по одной реализации шума."""
     return (est - target_phi + np.pi) % (2 * np.pi) - np.pi
 
 
@@ -42,7 +42,7 @@ def list_errors(
     signal_func: Callable,
     stiring_func: Callable,
 ) -> float:
-    """Формируем список ошибок для каждой реализации noise"""
+    """Формирование списка ошибок для каждой реализации шума."""
 
     dir_matrix = stiring_func(config_params)
 
@@ -75,7 +75,7 @@ def stat_vs_params(
     stat_func: Callable = calculate_variance,
     is_CRN: bool = True,
 ):
-    """Универсальная фанкция для построения зависимость дисперссии от параметра моделирования"""
+    """Расчёт статистики ошибки для набора значений параметра моделирования."""
     from copy import deepcopy
 
     result = []

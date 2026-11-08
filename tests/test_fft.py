@@ -13,8 +13,9 @@ import src.configs.comon as comon
 
 
 def test_lorenth_freq_rms():
-    """Тест сранивает численное вычисление f rms для испульса Лоренца от O до T
-    и аналтическую формула на беstandart divationнечном интревале времени"""
+    """Сравнение численной среднеквадратической частоты импульса Лоренца
+    с аналитическим значением для бесконечного интервала времени.
+    """
 
     config_params = cfg.init_rng()
     config_params["duration_pulse"] = 0.01
@@ -27,8 +28,7 @@ def test_lorenth_freq_rms():
 
 
 def test_sinus_freq_high_rms():
-    """Тест сранивает численное вычисление f rms для синусоиду
-    и centerальную частоту"""
+    """Сравнение среднеквадратической и центральной частот синусоиды."""
 
     config_params1 = cfg.init_rng()
     config_params1["f0"] = 1000
