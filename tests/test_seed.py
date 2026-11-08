@@ -40,7 +40,7 @@ def test_full_experiment():
     config_parametrs2 = cfg.init_rng()
     config_parametrs1["realisation_count"] = 3
     config_parametrs2["realisation_count"] = 3
-    var_bartlettt_vs_snr1 = stat_vs_params(
+    var_bartlett_vs_snr1 = stat_vs_params(
         config_params=config_parametrs1,
         energy_func=calculate_bartlett_values,
         signal_func=get_sin_signal,
@@ -49,7 +49,7 @@ def test_full_experiment():
         parametr_values=cfg.SNR_VALUES)
         
 
-    var_bartlettt_vs_snr2 = stat_vs_params(
+    var_bartlett_vs_snr2 = stat_vs_params(
         config_params=config_parametrs2,
         energy_func=calculate_bartlett_values,
         signal_func=get_sin_signal,
@@ -57,7 +57,7 @@ def test_full_experiment():
         stiring_func=calculate_stiring_matrix,
         parametr_values=cfg.SNR_VALUES,
     )
-    assert np.array_equal(var_bartlettt_vs_snr1, var_bartlettt_vs_snr2)
+    assert np.array_equal(var_bartlett_vs_snr1, var_bartlett_vs_snr2)
 
 
 def test_equality_rng():
