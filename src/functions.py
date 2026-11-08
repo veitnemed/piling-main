@@ -103,15 +103,18 @@ def calculate_energy(signal: np.ndarray, time_vector: np.ndarray):
     return np.trapezoid(y=signal**2, x=time_vector)
 
 
-def calculate_noise_level(
-    energy_signal: np.ndarray, snr: float, duration_all: np.ndarray
+def calculate_noise_level(energy_signal: np.ndarray, 
+                          snr: float, 
+                          duration_all: np.ndarray
 ):
     """Расчёт СКО шума из отношения энергии сигнала к средней энергии шума."""
 
     return np.sqrt(energy_signal / (duration_all * snr))
 
 
-def get_noise(config_parametrs, rng: Generator, energy_signal: float) -> np.ndarray:
+def get_noise(config_parametrs: dict, 
+              rng: Generator, 
+              energy_signal: float) -> np.ndarray:
     """Генерация аддитивного белого гауссовского шума с нулевым средним."""
 
     noise_level = calculate_noise_level(
@@ -120,10 +123,10 @@ def get_noise(config_parametrs, rng: Generator, energy_signal: float) -> np.ndar
     return rng.normal(loc=0, scale=noise_level, size=config_parametrs["N"])
 
 
-def get_gamma_array(SENSOR_AMOUNT: int) -> np.ndarray:
+def get_gamma_array(sensor_amount: int) -> np.ndarray:
     """Расчёт углов датчиков относительно оси x по их количеству."""
 
-    return (2 * np.pi / SENSOR_AMOUNT) * np.arange(SENSOR_AMOUNT)
+    return (2 * np.pi / sensor_amount) * np.arange(sensor_amount)
 
 
 def get_tau_array(config_parametrs: dict) -> np.ndarray:

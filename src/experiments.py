@@ -89,7 +89,7 @@ def stat_vs_params(
     for value in parametr_values:
 
         if is_CRN is True:
-            new_config = cfg.restart_rng(config_params)
+            new_config = cfg.restart_rng(new_config.copy())
 
         if parametr_name not in new_config:
             raise KeyError(f"Неизвестный параметр {parametr_name}")
