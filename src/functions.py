@@ -100,7 +100,7 @@ def calculate_99(freq_vector: np.ndarray, freq_signal: np.ndarray):
 
 def calculate_energy(signal: np.ndarray, time_vector: np.ndarray):
     """Расчёт энергии сигнала на интервале наблюдения от 0 до T."""
-    return np.trapezoid(y=signal**2, x=time_vector)
+    return np.trapezoid(y=np.abs(signal)**2, x=time_vector)
 
 
 def calculate_noise_level(energy_signal: np.ndarray, 
@@ -155,17 +155,6 @@ def get_sin_signal(config_params: dict) -> np.ndarray:
     )
 
 
-def get_analytical_sin_signal(config_params: dict) -> np.ndarray:
-    """Рассчёт аналтической синусоиды"""
-    from scipy.signal import hilbert
-
-    real_signal = (
-        config_params["A"]
-        * np.sin(config_params["time_vector"])
-        * (2 * np.pi * config_params["f0"])
-    )
-    return hilbert(real_signal)
-
 
 def get_avp_signals(
     p_t: np.ndarray, config_parametrs: dict, energy_signal: float
@@ -198,7 +187,7 @@ def get_channel_matrix(
 
     config_params_copy = config_params.copy()
     channel_matrix = np.zeros(
-        (3 * config_params_copy["M"], config_params_copy["N"])
+        (3 * config_params_copy["M"], config_params_copy["N"]), dtype = complex
     )  # Создаём нулевую матрицу размера 3M x N.
 
     for idx, tau in enumerate(tau_array):

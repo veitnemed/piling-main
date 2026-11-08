@@ -16,15 +16,20 @@ from src.functions import (
 )
 
 
-def single_est(
-    config_params: dict, dir_matrix: np.ndarray, target_func: Callable, signal_func
-) -> float:
+def single_est(config_params: dict, 
+               dir_matrix: np.ndarray, 
+               target_func: Callable, 
+               signal_func: Callable,
+               is_hilbert: bool = False) -> float:
     """Расчёт оценки по одной реализации шума."""
+    from scipy.signal import hilbert
 
     tau_array = get_tau_array(config_params)
     channel_matrix = get_channel_matrix(
         config_params=config_params, tau_array=tau_array, signal_func=signal_func
     )
+    if is_hilbert is True: 
+        channel_matrix = hilbert(channel_matrix.real, axis=1)
     W = get_covariation_matrix(channel_matrix, config_params["N"])
     Energy_values = target_func(W, dir_matrix)
     est = get_est_phi(config_params["phi_vector"], Energy_values)
@@ -41,14 +46,14 @@ def list_errors(
     target_func: Callable,
     signal_func: Callable,
     stiring_func: Callable,
-) -> float:
+    is_hilbert: bool = False) -> list:
     """Формирование списка ошибок для каждой реализации шума."""
 
     dir_matrix = stiring_func(config_params)
 
     return [
         single_error(
-            single_est(config_params, dir_matrix, target_func, signal_func),
+            single_est(config_params, dir_matrix, target_func, signal_func, is_hilbert),
             config_params["target_phi"],
         )
         for _ in range(config_params["realisation_count"])
@@ -73,6 +78,7 @@ def stat_vs_params(
     parametr_name: str,
     parametr_values: np.ndarray | list,
     stat_func: Callable = calculate_variance,
+    is_hilbert: bool = False,
     is_CRN: bool = True,
     is_random_start: bool = False,
 ):
@@ -96,6 +102,6 @@ def stat_vs_params(
 
         new_config[parametr_name] = value
 
-        lst = list_errors(new_config, energy_func, signal_func, stiring_func)
+        lst = list_errors(new_config, energy_func, signal_func, stiring_func, is_hilbert)
         result.append(stat_func(lst))
     return result
