@@ -19,7 +19,7 @@ NOISE_LEVEL_VALUES = comon.A/np.sqrt(SNR_VALUES)
 
 RADIUS_VALUES = np.linspace(0.1, 1, 10)
 SDN_VALUES = comon.A / np.sqrt(np.array(SNR_VALUES))
-PHI_VALUES = np.linspace(0, 2*np.pi, 30, endpoint = True) # Для построения пространства ошибок
+PHI_VALUES = np.linspace(0, 2*np.pi, 18, endpoint = True) # Для построения пространства ошибок
 FREQ_VALUES = np.linspace(1,250,25)
 # НА ДАННЫЙ МОМЕНТ ОТНОШЕНИЕ АЛЬФА ПОД ВОПРОСОМ, НУЖНО ЛИ ИМЕННО ЕГО ИССЛЕДОВАТЬ
 # ПОЭТОМУ Я РЕШИЛ ПОКА УБРАТЬ АЛЬФА-ЗАВИСИМОСТЬ 
@@ -52,7 +52,7 @@ def create_parameters_config() -> dict:
             "duration_pulse": comon.BETTA_PULSE,
             "realisation_count": comon.REALISATION_COUNT,
             "target_phi": comon.TARGET_PHI,
-            "phis": PHI_VECTOR,
+            "phi_vector": PHI_VECTOR,
             "main_seed": comon.GLOBAL_SEED,
             "main_rng": np.random.default_rng(comon.GLOBAL_SEED),
             "center_pulse": comon.CENTER_PULSE,

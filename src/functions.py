@@ -152,6 +152,18 @@ def get_sin_signal(config_params: dict) -> np.ndarray:
     )
 
 
+def get_analytical_sin_signal(config_params: dict) -> np.ndarray:
+    """Рассчёт аналтической синусоиды"""
+    from scipy.signal import hilbert
+
+    real_signal = (
+        config_params["A"]
+        * np.sin(config_params["time_vector"])
+        * (2 * np.pi * config_params["f0"])
+    )
+    return hilbert(real_signal)
+
+
 def get_avp_signals(
     p_t: np.ndarray, config_parametrs: dict, energy_signal: float
 ) -> dict:
@@ -225,7 +237,7 @@ def calculate_complex_stiring_matrix(configs: dict) -> np.ndarray:
     """Рассчёт матрицы стиринг-векторов"""
     res = []
 
-    for phi in configs["phis"]:
+    for phi in configs["phi_vector"]:
         config_copy = configs.copy()
         config_copy["target_phi"] = phi
         tau_array = get_tau_array(config_copy)
@@ -265,7 +277,7 @@ def calculate_stiring_matrix(config_params: dict):
     return np.array(
         [
             calculate_stiring_vector(phi, config_params["M"])
-            for phi in config_params["phis"]
+            for phi in config_params["phi_vector"]
         ]
     )
 

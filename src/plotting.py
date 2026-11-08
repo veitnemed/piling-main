@@ -53,11 +53,12 @@ def plot_mean_vs_param(
     parametr_name: str,
     parametr_values: np.ndarray | list,
     delta_time: float = 0,
-    xlim: tuple = None,
-    ylim: tuple = None,
+    xlim: tuple | None = None,
+    ylim: tuple | None = None,
     y_label: str = r"$\mathbb{E}[\varepsilon]$",
     y_size: str = ", deg",
-    type_signal: str = None,
+    type_signal: str | None = None,
+    save: bool = False,
 ):
     """График среднего значения ошибки оценки для нескольких методов."""
 
@@ -126,7 +127,7 @@ def plot_mean_vs_param(
         f"{NAMING_DICT[parametr_name]}: {parametr_values[0]:.2f} "
         f"to {parametr_values[-1]:.2f} ({len(parametr_values)} points)\n"
     )
-    info += f"Search angles: {len(config_params['phis'])}\n"
+    info += f"Search angles: {len(config_params['phi_vector'])}\n"
     info += f"Noise realizations: {config_params['realisation_count']}\n"
     info += f"Seed: {config_params['main_seed']}\n"
     info += f"Computation time: {delta_time:.2f} s"
@@ -163,11 +164,11 @@ def plot_mean_vs_param(
         bbox=dict(boxstyle="round", facecolor="none", alpha=1),
         clip_on=False,
     )
-
-    plt.savefig(
-        fname=f"attachment/images/report/mean_{parametr_name}_{config_params['realisation_count']}",
-        bbox_inches="tight",
-        dpi=300,
+    if save is True:
+        plt.savefig(
+            fname=f"attachment/images/report/mean_{parametr_name}_{config_params['realisation_count']}",
+            bbox_inches="tight",
+            dpi=300,
     )
     return fig, ax
 
@@ -183,6 +184,7 @@ def plot_variance_vs_param(
     y_label: str = r"$s_{\varepsilon}^{2}$",
     y_size: str = r", deg$^2$",
     type_signal: str = None,
+    save: bool = False,
 ):
     """График дисперсии ошибки оценки для нескольких методов."""
 
@@ -254,7 +256,7 @@ def plot_variance_vs_param(
         f"{NAMING_DICT[parametr_name]}: {parametr_values[0]:.2f} "
         f"to {parametr_values[-1]:.2f} ({len(parametr_values)} points)\n"
     )
-    info += f"Search angles: {len(config_params['phis'])}\n"
+    info += f"Search angles: {len(config_params['phi_vector'])}\n"
     info += f"Noise realizations: {config_params['realisation_count']}\n"
     info += f"Seed: {config_params['main_seed']}\n"
     info += f"Computation time: {delta_time:.2f} s"
@@ -268,7 +270,7 @@ def plot_variance_vs_param(
         linespacing=1.5,
         ha="left",
         va="top",
-        bbox=dict(boxstyle="round", facecolor="none", alpha=1),
+        bbox=dict(boxstyle="round", facecolor="none", alpha=1),  # noqa: C408
         clip_on=False,
     )
     info2 = ""
@@ -291,8 +293,8 @@ def plot_variance_vs_param(
         bbox=dict(boxstyle="round", facecolor="none", alpha=1),
         clip_on=False,
     )
-
-    plt.savefig(
+    if save is True:
+        plt.savefig(
         fname=f"attachment/images/report/var_{parametr_name}_{config_params['realisation_count']}",
         bbox_inches="tight",
         dpi=300,

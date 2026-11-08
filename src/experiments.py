@@ -27,7 +27,7 @@ def single_est(
     )
     W = get_covariation_matrix(channel_matrix, config_params["N"])
     Energy_values = target_func(W, dir_matrix)
-    est = get_est_phi(config_params["phis"], Energy_values)
+    est = get_est_phi(config_params["phi_vector"], Energy_values)
     return est
 
 
@@ -74,15 +74,18 @@ def stat_vs_params(
     parametr_values: np.ndarray | list,
     stat_func: Callable = calculate_variance,
     is_CRN: bool = True,
-    is_random_start: bool = False
-
+    is_random_start: bool = False,
 ):
     """Расчёт статистики ошибки для набора значений параметра моделирования."""
     from copy import deepcopy
 
     result = []
-    new_config = cfg.shake_rng(config_params) if is_random_start is True else deepcopy(config_params)
-    
+    new_config = (
+        cfg.shake_rng(config_params)
+        if is_random_start is True
+        else deepcopy(config_params)
+    )
+
     for value in parametr_values:
 
         if is_CRN is True:
