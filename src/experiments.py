@@ -16,14 +16,10 @@ from src.functions import (
 )
 
 
-
 def single_est(
-    config_params: dict, 
-    dir_matrix: np.ndarray, 
-    target_func: Callable, 
-    signal_func
+    config_params: dict, dir_matrix: np.ndarray, target_func: Callable, signal_func
 ) -> float:
-    """Считаем оценку по одной ревлизации шума"""
+    """Считаем оценку по одной ревлизации noise"""
 
     tau_array = get_tau_array(config_params)
     channel_matrix = get_channel_matrix(
@@ -35,18 +31,19 @@ def single_est(
     return est
 
 
-
 def single_error(est, target_phi):
-    """Считаем ошибку оценки по одной ревлизации шума"""
+    """Считаем ошибку оценки по одной ревлизации noise"""
     return (est - target_phi + np.pi) % (2 * np.pi) - np.pi
 
 
-def list_errors(config_params: dict, 
-                target_func: Callable, 
-                signal_func: Callable,
-                stiring_func: Callable) -> float:
-    """Формируем список ошибок для каждой реализации шума"""
-    
+def list_errors(
+    config_params: dict,
+    target_func: Callable,
+    signal_func: Callable,
+    stiring_func: Callable,
+) -> float:
+    """Формируем список ошибок для каждой реализации noise"""
+
     dir_matrix = stiring_func(config_params)
 
     return [
@@ -60,11 +57,13 @@ def list_errors(config_params: dict,
 
 def calculate_variance(list_errors: list) -> float:
     """Считаем дисперсию по списку ошибок"""
-    return np.var(list_errors, ddof = 1)
+    return np.var(list_errors, ddof=1)
+
 
 def calculate_mean(list_errors: list) -> float:
     """Считаем среднее выборки"""
     return np.mean(list_errors)
+
 
 def stat_vs_params(
     config_params: dict,
@@ -74,10 +73,11 @@ def stat_vs_params(
     parametr_name: str,
     parametr_values: np.ndarray | list,
     stat_func: Callable = calculate_variance,
-    is_CRN: bool = True):
-
+    is_CRN: bool = True,
+):
     """Универсальная фанкция для построения зависимость дисперссии от параметра моделирования"""
     from copy import deepcopy
+
     result = []
 
     new_config = deepcopy(config_params)
@@ -91,9 +91,6 @@ def stat_vs_params(
 
         new_config[parametr_name] = value
 
-            
         lst = list_errors(new_config, energy_func, signal_func, stiring_func)
         result.append(stat_func(lst))
     return result
-
-

@@ -4,7 +4,7 @@ from .configs import config as cfg
 
 
 def filtering_spectrum(spectrum: np.ndarray, bandwidth: float, fs: float) -> np.ndarray:
-    """Идеальный ФНЧ фильтр
+    """Идеальный low-pass filter фильтр
     Оставляет частотные составляющие в диапазоне от
     - bandwidth до bandwidth"""
 
@@ -25,7 +25,7 @@ def calculate_ifft(spectrum: np.ndarray) -> np.ndarray:
 
 
 def calculate_f_rms(spectrum: np.ndarray, config_parametrs: dict):
-    "Рассчёт среднеквадратической эффективной частоты"
+    "Рассчёт среднеквадратичеstandart divationй эффективной частоты"
     return np.abs(
         np.sqrt(
             np.trapezoid(
@@ -38,7 +38,7 @@ def calculate_f_rms(spectrum: np.ndarray, config_parametrs: dict):
 
 
 def calculate_fft(signal: np.ndarray):
-    """Вычиление комплексного амплитудного спектра (БПФ) без модуля
+    """Вычиление комплексного амплитудного spectrumа (БПФ) без модуля
     s(t) -> S(f) [комплексныый]"""
 
     fft_values = np.fft.fft(signal)
@@ -67,7 +67,7 @@ def calculate_spectrum_SNR(signal, noise, freq_vector, f):
 
     if len(cut_signal) == 0:
         raise ValueError(
-            "Спектральная составляющая должна содержать хотя бы один отсчёт"
+            "spectrumальная составляющая должна содержать хотя бы один отсчёт"
         )
 
     se_signal = calculate_spectrum_energy(cut_signal)
@@ -77,8 +77,8 @@ def calculate_spectrum_SNR(signal, noise, freq_vector, f):
 
 
 def filering_signal(signal: np.ndarray, bandwidth: float, fs: float) -> np.ndarray:
-    """Фильтрация сигнала"""
-    """Принимает сигнал во времнной области и возращает тоже
+    """Фильтрация signalа"""
+    """Принимает signal во времнной области и возращает тоже
     во временной (ШИРИНА ФИЛЬТРАЦИИ 2*B) """
 
     freq_signal = calculate_fft(signal)
@@ -89,7 +89,7 @@ def filering_signal(signal: np.ndarray, bandwidth: float, fs: float) -> np.ndarr
 
 
 def calculate_99(freq_vector: np.ndarray, freq_signal: np.ndarray):
-    """Рассчёт односторонней ширины спектра при которой сохранеется
+    """Рассчёт односторонней ширины spectrumа при которой сохранеется
     99% энергии (ШИРИНА ФИЛЬТРАЦИИ 2*B)"""
 
     power = np.abs(freq_signal) ** 2
@@ -102,14 +102,14 @@ def calculate_99(freq_vector: np.ndarray, freq_signal: np.ndarray):
 
 
 def calculate_energy(signal: np.ndarray, time_vector: np.ndarray):
-    """Рассчёт энергии сигнала на интервале наблюдения от 0 до T"""
+    """Рассчёт энергии signalа на интервале наблюдения от 0 до T"""
     return np.trapezoid(y=signal**2, x=time_vector)
 
 
 def calculate_noise_level(
     energy_signal: np.ndarray, snr: float, duration_all: np.ndarray
 ):
-    """Рассчёт СКО шума из опредения SNR: отношения энергии сигнала к средней энергии шума"""
+    """Рассчёт SD noise из опредения SNR: отношения энергии signalа к средней энергии noise"""
 
     return np.sqrt(energy_signal / (duration_all * snr))
 
@@ -124,15 +124,15 @@ def get_noise(config_parametrs, rng: Generator, energy_signal: float) -> np.ndar
 
 
 def get_gamma_array(SENSOR_AMOUNT: int) -> np.ndarray:
-    """Рассчет углов датчиков относительно оси x
-    Функция принимает на вход число датчиков и возвращает
-    массив углов для каждого датчика"""
+    """Рассчет углов Sensorов относительно оси x
+    Функция принимает на вход число Sensorов и возвращает
+    массив углов для каждого Sensorа"""
 
     return (2 * np.pi / SENSOR_AMOUNT) * np.arange(SENSOR_AMOUNT)
 
 
 def get_tau_array(config_parametrs: dict) -> np.ndarray:
-    """Рассчёт задержек относительно каждого датчика"""
+    """Рассчёт задержек относительно каждого Sensorа"""
 
     return (config_parametrs["R"] / config_parametrs["c"]) * np.cos(
         config_parametrs["target_phi"] - get_gamma_array(config_parametrs["M"])
@@ -150,7 +150,7 @@ def get_impulse_signal(config_params: dict) -> np.ndarray:
 
 
 def get_sin_signal(config_params: dict) -> np.ndarray:
-    """Считаем значение гармончиеского сигнала в каждый момент времени"""
+    """Считаем значение гармончиеstandart divationго signalа в каждый момент времени"""
 
     return config_params["A"] * np.sin(
         config_params["time_vector"] * (2 * np.pi * config_params["f0"])
@@ -160,7 +160,7 @@ def get_sin_signal(config_params: dict) -> np.ndarray:
 def get_avp_signals(
     p_t: np.ndarray, config_parametrs: dict, energy_signal: float
 ) -> dict:
-    """Рассчёт значений каналов y0 y1 y2 для АВП"""
+    """Рассчёт значений каналов y0 y1 y2 для AVS"""
 
     child_seeds = config_parametrs["main_rng"].bit_generator.seed_seq.spawn(3)
 
@@ -184,7 +184,7 @@ def get_avp_signals(
 def get_channel_matrix(
     config_params: dict, tau_array: np.ndarray, signal_func
 ) -> np.ndarray:
-    """Функция возращает матрицу 3M x N со значениями для каждого из трёх каналов датчика АВП"""
+    """Функция возращает матрицу 3M x N со значениями для каждого из трёх каналов Sensorа AVS"""
 
     config_params_copy = config_params.copy()
     channel_matrix = np.zeros(
@@ -247,7 +247,7 @@ def calculate_complex_stiring_matrix(configs: dict) -> np.ndarray:
 def calculate_full_bartlett_values(
     W: np.ndarray, complex_stiring_matrix: np.ndarray
 ) -> list:
-    """Рассчёт значений энергетического спектра  бартлета"""
+    """Рассчёт значений энергетичеstandart divationго spectrumа  бартлета"""
     return np.sum(
         (np.conj(complex_stiring_matrix) @ W) * complex_stiring_matrix, axis=1
     )
@@ -259,8 +259,8 @@ def calculate_stiring_vector(phi: float, M: int) -> np.ndarray:
 
 
 def calculate_full_capon_values(W: np.ndarray, complex_dir_matrix: np.ndarray) -> list:
-    """Рассчёт значений энергетического спектра  Кейпона"""
-    W_inv = np.linalg.inv(W)
+    """Рассчёт значений энергетичеstandart divationго spectrumа  Caponа"""
+    W_inv = np.linalg.pinv(W)
 
     return 1 / (
         np.sum((np.conj(complex_dir_matrix) @ W_inv) * complex_dir_matrix, axis=1)
@@ -278,7 +278,7 @@ def calculate_stiring_matrix(config_params: dict):
 
 
 def calculate_capon_values(W: np.ndarray, dir_matrix: np.ndarray) -> list:
-    """Рассчёт значений энергетического спектра  Кейпона"""
+    """Рассчёт значений энергетичеstandart divationго spectrumа  Caponа"""
     W_inv = np.linalg.inv(W)
 
     return 1 / (np.sum((dir_matrix @ W_inv) * dir_matrix, axis=1))
@@ -290,5 +290,5 @@ def get_est_phi(phi_vector: np.ndarray, e_values: np.ndarray) -> float:
 
 
 def calculate_bartlett_values(W: np.ndarray, dir_matrix: np.ndarray) -> list:
-    """Рассчёт значений энергетического спектра  бартлета"""
+    """Рассчёт значений энергетичеstandart divationго spectrumа  бартлета"""
     return np.sum((dir_matrix @ W) * dir_matrix, axis=1)
