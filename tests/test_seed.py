@@ -1,4 +1,5 @@
 import src.configs.config as cfg
+import src.spectrum as spectrum
 from src.functions import (
     get_avp_signals,
     get_sin_signal,
@@ -46,8 +47,8 @@ def test_full_experiment():
         signal_func=get_sin_signal,
         parametr_name="snr",
         stiring_func=calculate_stiring_matrix,
-        parametr_values=cfg.SNR_VALUES)
-        
+        parametr_values=cfg.SNR_VALUES,
+    )
 
     var_bartlett_vs_snr2 = stat_vs_params(
         config_params=config_parametrs2,

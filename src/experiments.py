@@ -5,6 +5,7 @@ import stat
 import numpy as np
 from wcwidth import ljust
 import src.configs.config as cfg
+import src.spectrum as spectrum
 from collections.abc import Callable
 
 from src.functions import (
@@ -16,11 +17,13 @@ from src.functions import (
 )
 
 
-def single_est(config_params: dict, 
-               dir_matrix: np.ndarray, 
-               target_func: Callable, 
-               signal_func: Callable,
-               is_hilbert: bool = False) -> float:
+def single_est(
+    config_params: dict,
+    dir_matrix: np.ndarray,
+    target_func: Callable,
+    signal_func: Callable,
+    is_hilbert: bool = False,
+) -> float:
     """Расчёт оценки по одной реализации шума."""
     from scipy.signal import hilbert
 
@@ -28,7 +31,7 @@ def single_est(config_params: dict,
     channel_matrix = get_channel_matrix(
         config_params=config_params, tau_array=tau_array, signal_func=signal_func
     )
-    if is_hilbert is True: 
+    if is_hilbert is True:
         channel_matrix = hilbert(channel_matrix.real, axis=1)
     W = get_covariation_matrix(channel_matrix, config_params["N"])
     Energy_values = target_func(W, dir_matrix)
@@ -46,7 +49,8 @@ def list_errors(
     target_func: Callable,
     signal_func: Callable,
     stiring_func: Callable,
-    is_hilbert: bool = False) -> list:
+    is_hilbert: bool = False,
+) -> list:
     """Формирование списка ошибок для каждой реализации шума."""
 
     dir_matrix = stiring_func(config_params)
@@ -102,6 +106,8 @@ def stat_vs_params(
 
         new_config[parametr_name] = value
 
-        lst = list_errors(new_config, energy_func, signal_func, stiring_func, is_hilbert)
+        lst = list_errors(
+            new_config, energy_func, signal_func, stiring_func, is_hilbert
+        )
         result.append(stat_func(lst))
     return result

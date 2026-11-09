@@ -1,5 +1,6 @@
 import numpy as np
 import src.configs.config as cfg
+import src.spectrum as spectrum
 from src.functions import calculate_energy
 import src.configs.comon as comon
 
