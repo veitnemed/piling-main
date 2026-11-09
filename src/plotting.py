@@ -87,7 +87,7 @@ def plot_mean_vs_param(
             label=method,
             linestyle=LINES[idx % len(LINES)],
             linewidth=3,
-            marker = MARKERS[idx % len(MARKERS)]
+            marker=MARKERS[idx % len(MARKERS)],
         )
 
     ax.set_xlabel(XLABELS_DICT[parametr_name], fontsize=18)
@@ -169,7 +169,7 @@ def plot_mean_vs_param(
             fname=f"attachment/images/report/mean_{parametr_name}_{config_params['realisation_count']}",
             bbox_inches="tight",
             dpi=300,
-    )
+        )
     return fig, ax
 
 
@@ -213,7 +213,7 @@ def plot_variance_vs_param(
             label=method,
             linestyle=LINES[idx % len(LINES)],
             linewidth=3,
-            marker = MARKERS[idx % len(MARKERS)]
+            marker=MARKERS[idx % len(MARKERS)],
         )
 
     ax.set_xlabel(XLABELS_DICT[parametr_name], fontsize=18)
@@ -295,10 +295,10 @@ def plot_variance_vs_param(
     )
     if save is True:
         plt.savefig(
-        fname=f"attachment/images/report/var_{parametr_name}_{config_params['realisation_count']}",
-        bbox_inches="tight",
-        dpi=300,
-    )
+            fname=f"attachment/images/report/var_{parametr_name}_{config_params['realisation_count']}",
+            bbox_inches="tight",
+            dpi=300,
+        )
     return fig, ax
 
 
@@ -376,15 +376,15 @@ def create_config_table(
 def show_geometry_avp(configs: dict):
     """Построение геометрии акустической векторной решётки."""
 
-    from src.functions import get_gamma_array, get_tau_array
+    from src.functions import gamma_array, tau_array
 
     r = configs["R"]
 
     x = r * np.sin(2 * np.pi * configs["time_vector"])
     y = r * np.cos(2 * np.pi * configs["time_vector"])
 
-    gamma_arr = get_gamma_array(configs["M"])
-    tau_arr = list(get_tau_array(configs) * 1e3)  # Миллисекунды.
+    gamma_arr = array.gamma_array(configs["M"])
+    tau_arr = list(tau_array(configs) * 1e3)  # Миллисекунды.
     tau_mks = [round(float(tau), 1) for tau in tau_arr]
 
     fig, ax = plt.subplots(1, 1, figsize=(12, 12))

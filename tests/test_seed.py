@@ -1,7 +1,7 @@
 import src.configs.config as cfg
 import src.spectrum as spectrum
 from src.functions import (
-    get_avp_signals,
+    avp_signals,
     get_sin_signal,
     calculate_capon_values,
     calculate_bartlett_values,
@@ -12,27 +12,29 @@ from src.functions import (
 )
 import numpy as np
 from src.experiments import stat_vs_params
+import src.signals as signals
+import src.array as array
 
 
 def test_some_avp_signals():
     config_parametrs = cfg.init_rng(42)
     config_parametrs1 = cfg.init_rng(42)
-    p_t = get_sin_signal(config_parametrs)
+    p_t = signals.sinus(config_parametrs)
     e_t = calculate_energy(p_t, cfg.TIME_VECTOR)
 
-    signals1 = get_avp_signals(p_t, config_parametrs, e_t)
-    signals2 = get_avp_signals(p_t, config_parametrs1, e_t)
+    signals1 = array.avp_signals(p_t, config_parametrs, e_t)
+    signals2 = array.avp_signals(p_t, config_parametrs1, e_t)
     assert all(np.array_equal(signals1[key], signals2[key]) for key in signals1)
 
 
 def test_different_avp_signals():
     config_parametrs = cfg.init_rng(1)
-    p_t = get_sin_signal(config_parametrs)
+    p_t = signals.sinus(config_parametrs)
     e_t = calculate_energy(p_t, cfg.TIME_VECTOR)
-    signals1 = get_avp_signals(p_t, config_parametrs, e_t)
+    signals1 = array.avp_signals(p_t, config_parametrs, e_t)
 
     config_parametrs1 = cfg.init_rng(2)
-    signals2 = get_avp_signals(p_t, config_parametrs1, e_t)
+    signals2 = array.avp_signals(p_t, config_parametrs1, e_t)
     assert any(not np.array_equal(signals1[key], signals2[key]) for key in signals1)
 
 
@@ -68,11 +70,11 @@ def test_equality_rng():
     config1 = cfg.restart_rng(original)
     config2 = cfg.restart_rng(original)
 
-    p_t1 = get_sin_signal(config1)
+    p_t1 = signals.sinus(config1)
     e_t1 = calculate_energy(p_t1, cfg.TIME_VECTOR)
     noise1 = get_noise(config1, config1["main_rng"], e_t1)
 
-    p_t2 = get_sin_signal(config2)
+    p_t2 = signals.sinus(config2)
     e_t2 = calculate_energy(p_t2, cfg.TIME_VECTOR)
     noise2 = get_noise(config2, config2["main_rng"], e_t2)
 

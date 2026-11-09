@@ -9,9 +9,9 @@ import src.spectrum as spectrum
 from collections.abc import Callable
 
 from src.functions import (
-    get_tau_array,
-    get_covariation_matrix,
-    get_channel_matrix,
+    tau_array,
+    covariation_matrix,
+    channel_matrix,
     get_est_phi,
     calculate_stiring_matrix,
 )
@@ -27,13 +27,13 @@ def single_est(
     """Расчёт оценки по одной реализации шума."""
     from scipy.signal import hilbert
 
-    tau_array = get_tau_array(config_params)
-    channel_matrix = get_channel_matrix(
+    tau_array = array.tau_array(config_params)
+    channel_matrix = array.channel_matrix(
         config_params=config_params, tau_array=tau_array, signal_func=signal_func
     )
     if is_hilbert is True:
         channel_matrix = hilbert(channel_matrix.real, axis=1)
-    W = get_covariation_matrix(channel_matrix, config_params["N"])
+    W = covariation_matrix(channel_matrix, config_params["N"])
     Energy_values = target_func(W, dir_matrix)
     est = get_est_phi(config_params["phi_vector"], Energy_values)
     return est
