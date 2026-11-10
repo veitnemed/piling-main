@@ -4,7 +4,7 @@ import src.spectrum as spectrum
 from src.functions import calculate_energy
 import src.configs.comon as comon
 import src.signals as signals
-import src.array as array
+
 
 
 def test_lorenth_freq_rms():

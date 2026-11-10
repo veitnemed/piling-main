@@ -1,14 +1,10 @@
 import src.configs.config as cfg
 import src.spectrum as spectrum
 from src.functions import (
-    avp_signals,
-    get_sin_signal,
     calculate_capon_values,
     calculate_bartlett_values,
     calculate_energy,
-    get_impulse_signal,
     get_noise,
-    calculate_stiring_matrix,
 )
 import numpy as np
 from src.experiments import stat_vs_params
@@ -46,19 +42,19 @@ def test_full_experiment():
     var_bartlett_vs_snr1 = stat_vs_params(
         config_params=config_parametrs1,
         energy_func=calculate_bartlett_values,
-        signal_func=get_sin_signal,
+        signal_func=signals.sinus,
         parametr_name="snr",
-        stiring_func=calculate_stiring_matrix,
+        stiring_func= array.calculate_stiring_matrix,
         parametr_values=cfg.SNR_VALUES,
     )
 
     var_bartlett_vs_snr2 = stat_vs_params(
         config_params=config_parametrs2,
         energy_func=calculate_bartlett_values,
-        signal_func=get_sin_signal,
+        signal_func=signals.sinus,
         parametr_name="snr",
-        stiring_func=calculate_stiring_matrix,
-        parametr_values=cfg.SNR_VALUES,
+        stiring_func = array.calculate_stiring_matrix,
+        parametr_values = cfg.SNR_VALUES,
     )
     assert np.array_equal(var_bartlett_vs_snr1, var_bartlett_vs_snr2)
 

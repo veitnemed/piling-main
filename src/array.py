@@ -94,6 +94,25 @@ def complex_stiring_matrix(configs: dict) -> np.ndarray:
     for phi in configs["phi_vector"]:
         config_copy = configs.copy()
         config_copy["target_phi"] = phi
-        tau_array = tau_array(config_copy)
-        res.append(complex_stiring_vector(phi, tau_array, configs["f0"], configs["M"]))
+        taus = tau_array(config_copy)
+        res.append(complex_stiring_vector(phi, taus, configs["f0"], configs["M"]))
     return np.array(res)
+
+
+
+
+def calculate_stiring_vector(phi: float, M: int) -> np.ndarray:
+    """Направляющий вектор"""
+    return np.array([1, np.cos(phi), np.sin(phi)] * M).T
+
+
+
+
+def calculate_stiring_matrix(config_params: dict):
+    """Рассчёт матрицы направляющих векторов"""
+    return np.array(
+        [
+            calculate_stiring_vector(phi, config_params["M"])
+            for phi in config_params["phi_vector"]
+        ]
+    )

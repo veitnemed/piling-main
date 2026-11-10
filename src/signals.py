@@ -1,14 +1,9 @@
 import numpy as np
 
-
 def lorenth(config_params: dict) -> np.ndarray:
     """Расчёт импульса Лоренца по заданным параметрам."""
     tau = config_params["duration_pulse"]
-    return (
-        config_params["A"]
-        * tau
-        / (tau**2 + (config_params["time_vector"] - config_params["center_pulse"]) ** 2)
-    )
+    return config_params["p_max"] * (tau**2 / (tau**2 + (config_params["time_vector"] - config_params["center_pulse"]) ** 2))
 
 
 def sinus(config_params: dict) -> np.ndarray:

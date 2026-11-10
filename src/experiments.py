@@ -1,20 +1,12 @@
 """Статистика экспериментов"""
-
-import stat
-
 import numpy as np
 from wcwidth import ljust
 import src.configs.config as cfg
-import src.spectrum as spectrum
 from collections.abc import Callable
+import src.array as array 
 
-from src.functions import (
-    tau_array,
-    covariation_matrix,
-    channel_matrix,
-    get_est_phi,
-    calculate_stiring_matrix,
-)
+
+from src.functions import (get_est_phi)
 
 
 def single_est(
@@ -27,13 +19,13 @@ def single_est(
     """Расчёт оценки по одной реализации шума."""
     from scipy.signal import hilbert
 
-    tau_array = array.tau_array(config_params)
+    taus = array.tau_array(config_params)
     channel_matrix = array.channel_matrix(
-        config_params=config_params, tau_array=tau_array, signal_func=signal_func
+        config_params=config_params, tau_array=taus, signal_func=signal_func
     )
     if is_hilbert is True:
         channel_matrix = hilbert(channel_matrix.real, axis=1)
-    W = covariation_matrix(channel_matrix, config_params["N"])
+    W = array.covariation_matrix(channel_matrix, config_params["N"])
     Energy_values = target_func(W, dir_matrix)
     est = get_est_phi(config_params["phi_vector"], Energy_values)
     return est
