@@ -1,6 +1,6 @@
 import numpy as np
-import src.functions as functions
-
+import src.estimate as estimate
+import src.signals as signals 
 
 def gamma_array(sensor_amount: int) -> np.ndarray:
     """Расчёт углов датчиков относительно оси x по их количеству."""
@@ -25,15 +25,15 @@ def avp_signals(p_t: np.ndarray, config_parametrs: dict, energy_signal: float) -
     rng2 = np.random.default_rng(child_seeds[1])
     rng3 = np.random.default_rng(child_seeds[2])
 
-    y0 = p_t + functions.get_noise(
+    y0 = p_t + signals.get_noise(
         config_parametrs, rng1, energy_signal
     )  # Размер 1 x N.
 
-    y1 = p_t * np.cos(config_parametrs["target_phi"]) + functions.get_noise(
+    y1 = p_t * np.cos(config_parametrs["target_phi"]) + signals.get_noise(
         config_parametrs, rng2, energy_signal
     )
 
-    y2 = p_t * np.sin(config_parametrs["target_phi"]) + functions.get_noise(
+    y2 = p_t * np.sin(config_parametrs["target_phi"]) + signals.get_noise(
         config_parametrs, rng3, energy_signal
     )
 
@@ -55,12 +55,12 @@ def channel_matrix(
 
         config_params_copy["time_vector"] = config_params["time_vector"] - tau
         p_t = signal_func(config_params_copy)
-        energy_signal = functions.calculate_energy(
+        energy_signal = signals.calculate_energy(
             p_t, config_params_copy["time_vector"]
         )
-        signals = avp_signals(p_t, config_params_copy, energy_signal)
+        signals_avp = avp_signals(p_t, config_params_copy, energy_signal)
 
-        sensor_matrix = np.vstack((signals["y0"], signals["y1"], signals["y2"]))
+        sensor_matrix = np.vstack((signals_avp["y0"], signals_avp["y1"], signals_avp["y2"]))
         channel_matrix[idx * 3 : idx * 3 + 3] = sensor_matrix
 
     return channel_matrix
@@ -99,13 +99,9 @@ def complex_stiring_matrix(configs: dict) -> np.ndarray:
     return np.array(res)
 
 
-
-
 def calculate_stiring_vector(phi: float, M: int) -> np.ndarray:
     """Направляющий вектор"""
     return np.array([1, np.cos(phi), np.sin(phi)] * M).T
-
-
 
 
 def calculate_stiring_matrix(config_params: dict):

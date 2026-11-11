@@ -1,6 +1,6 @@
 import numpy as np
 from matplotlib import pyplot as plt
-import src.array as array
+import src.model as model
 
 PI_AXIS = {
     "ticks": np.arange(9) * np.pi / 4,
@@ -380,8 +380,8 @@ def show_geometry_avp(configs: dict):
     x = r * np.sin(2 * np.pi * configs["time_vector"])
     y = r * np.cos(2 * np.pi * configs["time_vector"])
 
-    gamma_arr = array.gamma_array(configs["M"])
-    tau_arr = list(array.tau_array(configs) * 1e3)  # Миллисекунды.
+    gamma_arr = model.gamma_array(configs["M"])
+    tau_arr = list(model.tau_array(configs) * 1e3)  # Миллисекунды.
     tau_mks = [round(float(tau), 1) for tau in tau_arr]
 
     fig, ax = plt.subplots(1, 1, figsize=(12, 12))
