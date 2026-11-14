@@ -1,60 +1,45 @@
 import numpy as np
 import src.configs.comon as comon
 
-# ========== ВЕКТОРЫ =============
-# ================================
-
-TIME_VECTOR = np.arange(comon.N) * comon.DT  # ВЕКТОР ВРЕМЕНИ
-FREQ_VECTOR = np.fft.fftshift(np.fft.fftfreq(comon.N, d=1 / comon.FS))
-PHI_VECTOR = np.linspace(
-    0, 2 * np.pi, comon.AMOUNT_PHI, endpoint=False
-)  # Значения угла от 0 до 2П
-
-
-# ========== ЗНАЧЕНИЯ =============
-# ===============================
-
-SENSOR_VALUES = [1, 5, 7, 10, 12, 15, 17, 20]
-SNR_VALUES = np.linspace(0.5, 10, 10)
-NOISE_LEVEL_VALUES = comon.A / np.sqrt(SNR_VALUES)
-
-RADIUS_VALUES = np.linspace(0.1, 1, 10)
-SDN_VALUES = comon.A / np.sqrt(np.array(SNR_VALUES))
-PHI_VALUES = np.linspace(
-    0, 2 * np.pi, 18, endpoint=True
-)  # Для построения пространства ошибок
-FREQ_VALUES = np.linspace(1, 100, 25)
-# НА ДАННЫЙ МОМЕНТ ОТНОШЕНИЕ АЛЬФА ПОД ВОПРОСОМ, НУЖНО ЛИ ИМЕННО ЕГО ИССЛЕДОВАТЬ
-# ПОЭТОМУ Я РЕШИЛ ПОКА УБРАТЬ АЛЬФА-ЗАВИСИМОСТЬ
-# ALPHA_VALUES = np.arange(10,20,1)
-# ALPHA_RMS_VALUES = np.arange(10,20,1)
-
-
 # ========== КОНФИГУРАЦИЯ =======
 # ================================
-
 
 def create_parameters_config() -> dict:
     """Создание конфигурации"""
     comons = comon.init_comon_params()
 
+    # ВЕКТОРЫ
     TIME_VECTOR = np.arange(comons["N"]) * comons["dt"]
     FREQ_VECTOR = np.fft.fftshift(np.fft.fftfreq(comons["N"], d=1 / comons["fs"]))
     PHI_VECTOR = np.linspace(0, 2 * np.pi, comons["amount_phi"], endpoint=False)
+    # ДИАПАЗОНЫ
+    SENSOR_VALUES = [1, 5, 7, 10, 12, 15, 17, 20]
+    SNR_VALUES = np.linspace(0.5, 10, 10)
+    NOISE_LEVEL_VALUES = comons["A"] / np.sqrt(SNR_VALUES)
+    RADIUS_VALUES = np.linspace(0.1, 1, 10)
+    SDN_VALUES = comons["A"] / np.sqrt(np.array(SNR_VALUES))
+    PHI_VALUES = np.linspace(0, 2 * np.pi, 18, endpoint=True)
+    FREQ_VALUES = np.linspace(1, 100, 25)
 
     return {
         "time_vector": TIME_VECTOR,
         "freq_vector": FREQ_VECTOR,
         "phi_vector": PHI_VECTOR,
+        "sensor_values": SENSOR_VALUES,
+        "snr_values": SNR_VALUES,
+        "noise_level_values": NOISE_LEVEL_VALUES,
+        "radius_values": RADIUS_VALUES,
+        "sdn_values": SDN_VALUES,
+        "phi_values": PHI_VALUES,
+        "freq_values": FREQ_VALUES,
         "main_rng": np.random.default_rng(comons["main_seed"]),
         **comons
-        # "alpha": comon.ALPHA,
-        # "alpha_rms": comon.RMS_ALPHA,
     }
 
 # ========== ИНИЦИАЛИЗАЦИЯ =======
 # ========================
-def init_rng(main_seed: int = comon.GLOBAL_SEED):
+
+def init_rng(main_seed: int = comon.init_comon_params()["main_seed"]):
     """Инциализация стартового конфига"""
 
     parametrs = create_parameters_config()

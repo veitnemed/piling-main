@@ -1,7 +1,6 @@
 import numpy as np
 import src.configs.config as config
 import src.spectrum as spectrum
-import src.configs.comon as comon
 import src.signals as signals
 
 
@@ -34,16 +33,17 @@ def test_sinus_freq_high_rms():
 
 
 def test_f99_for_gauss():
+    params = config.create_parameters_config()
     sigma = 0.01
-    t0 = comon.DURATION_ALL / 2
-    gauss_pulse = np.exp(-(((config.TIME_VECTOR - t0) / sigma) ** 2))
+    t0 = params["duration_all"] / 2
+    gauss_pulse = np.exp(-(((params["time_vector"] - t0) / sigma) ** 2))
     spectr = spectrum.fft(gauss_pulse)
-    E_gaus = signals.calculate_energy(gauss_pulse, config.TIME_VECTOR)
-    filt_rect = spectrum.cut_spectrum(gauss_pulse, 100, comon.FS)
-    f99 = spectrum.f_99(config.FREQ_VECTOR, spectr)
+    E_gaus = signals.calculate_energy(gauss_pulse, params["time_vector"])
+    filt_rect = spectrum.cut_spectrum(gauss_pulse, 100, params["fs"])
+    f99 = spectrum.f_99(params["freq_vector"], spectr)
 
-    filt_rect = spectrum.cut_signal(gauss_pulse, 2 * f99, comon.FS)
+    filt_rect = spectrum.cut_signal(gauss_pulse, 2 * f99, params["fs"])
 
-    E_rect_filt = signals.calculate_energy(filt_rect, config.TIME_VECTOR)
+    E_rect_filt = signals.calculate_energy(filt_rect, params["time_vector"])
 
     assert (E_rect_filt / E_gaus) * 100 >= 99

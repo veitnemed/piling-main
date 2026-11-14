@@ -11,7 +11,7 @@ def test_some_avp_signals():
     config_parametrs = config.init_rng(42)
     config_parametrs1 = config.init_rng(42)
     p_t = signals.sinus(config_parametrs)
-    e_t = signals.calculate_energy(p_t, config.TIME_VECTOR)
+    e_t = signals.calculate_energy(p_t, config_parametrs["time_vector"])
 
     signals1 = model.avp_signals(p_t, config_parametrs, e_t)
     signals2 = model.avp_signals(p_t, config_parametrs1, e_t)
@@ -21,7 +21,7 @@ def test_some_avp_signals():
 def test_different_avp_signals():
     config_parametrs = config.init_rng(1)
     p_t = signals.sinus(config_parametrs)
-    e_t = signals.calculate_energy(p_t, config.TIME_VECTOR)
+    e_t = signals.calculate_energy(p_t, config_parametrs["time_vector"])
     signals1 = model.avp_signals(p_t, config_parametrs, e_t)
 
     config_parametrs1 = config.init_rng(2)
@@ -40,7 +40,7 @@ def test_full_experiment():
         signal_func=signals.sinus,
         parametr_name="snr",
         stiring_func=model.calculate_stiring_matrix,
-        parametr_values=config.SNR_VALUES,
+        parametr_values=config_parametrs1["snr_values"],
     )
 
     var_bartlett_vs_snr2 = experement.stat_vs_params(
@@ -49,7 +49,7 @@ def test_full_experiment():
         signal_func=signals.sinus,
         parametr_name="snr",
         stiring_func=model.calculate_stiring_matrix,
-        parametr_values=config.SNR_VALUES,
+        parametr_values=config_parametrs2["snr_values"],
     )
     assert np.array_equal(var_bartlett_vs_snr1, var_bartlett_vs_snr2)
 
@@ -62,11 +62,11 @@ def test_equality_rng():
     config2 = config.restart_rng(original)
 
     p_t1 = signals.sinus(config1)
-    e_t1 = signals.calculate_energy(p_t1, config.TIME_VECTOR)
+    e_t1 = signals.calculate_energy(p_t1, config1["time_vector"])
     noise1 = signals.get_noise(config1, config1["main_rng"], e_t1)
 
     p_t2 = signals.sinus(config2)
-    e_t2 = signals.calculate_energy(p_t2, config.TIME_VECTOR)
+    e_t2 = signals.calculate_energy(p_t2, config2["time_vector"])
     noise2 = signals.get_noise(config2, config2["main_rng"], e_t2)
 
     assert np.array_equal(noise1, noise2)
