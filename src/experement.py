@@ -1,31 +1,28 @@
 """Статистика экспериментов"""
 
+from collections.abc import Callable
+
 import numpy as np
 import scipy.signal as signal
 import src.configs.config as config
-from collections.abc import Callable
 import src.model as model
+
 
 def estimate_athimut(phi_vector: np.ndarray, pseudospectrum: np.ndarray) -> float:
     """Определяем угол по максимум аргумента бартлета"""
     return phi_vector[np.argmax(pseudospectrum)]
 
+
 def single_est(
     config_params: dict,
     dir_matrix: np.ndarray,
     target_func: Callable,
-    signal_func: Callable,
-    is_hilbert: bool = False,
-) -> float:
+    signal_func: Callable,) -> float:
     """Расчёт оценки по одной реализации шума."""
-
 
     taus = model.tau_array(config_params)
     channel_matrix = model.channel_matrix(
-        config_params=config_params, tau_array=taus, signal_func=signal_func
-    )
-    if is_hilbert is True:
-        channel_matrix = signal.hilbert(channel_matrix.real, axis=1)
+        config_params=config_params, tau_array=taus, signal_func=signal_func)
 
     W = model.covariation_matrix(channel_matrix, config_params["N"])
     Energy_values = target_func(W, dir_matrix)
@@ -42,16 +39,19 @@ def list_errors(
     config_params: dict,
     target_func: Callable,
     signal_func: Callable,
-    stiring_func: Callable,
-    is_hilbert: bool = False,
-) -> list:
+    stiring_func: Callable) -> list:
     """Формирование списка ошибок для каждой реализации шума."""
 
     dir_matrix = stiring_func(config_params)
 
     return [
         single_error(
-            single_est(config_params, dir_matrix, target_func, signal_func, is_hilbert),
+            single_est(
+                config_params,
+                dir_matrix,
+                target_func,
+                signal_func,
+            ),
             config_params["target_phi"],
         )
         for _ in range(config_params["realisation_count"])
@@ -64,8 +64,8 @@ def calculate_variance(list_errors: list) -> float:
 
 
 def stat_vs_params(
-    config_params: dict,
-    energy_func: Callable,
+    config_params: dict,  # Вссе необходимые переменные
+    pseudo_dunc: Callable,
     signal_func: Callable,
     stiring_func: Callable,
     parametr_name: str,
@@ -73,7 +73,6 @@ def stat_vs_params(
     stat_func: Callable = calculate_variance,
     is_CRN: bool = True,
     is_random_start: bool = False,
-    is_hilbert: bool = False,
 ):
     """Расчёт статистики ошибки для набора значений параметра моделирования."""
     from copy import deepcopy
@@ -95,6 +94,11 @@ def stat_vs_params(
 
         new_config[parametr_name] = value
 
-        lst = list_errors(new_config, energy_func, signal_func, stiring_func, is_hilbert)
+        lst = list_errors(
+            new_config,
+            pseudo_dunc,
+            signal_func,
+            stiring_func,
+        )
         result.append(stat_func(lst))
     return result

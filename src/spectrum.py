@@ -34,7 +34,6 @@ def f_rms(spectrum: np.ndarray, config_parametrs: dict):
         )
     )
 
-
 def fft(signal: np.ndarray):
     """Вычисление комплексного амплитудного спектра с помощью БПФ."""
 

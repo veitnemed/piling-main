@@ -36,7 +36,7 @@ def test_full_experiment():
     config_parametrs2["realisation_count"] = 3
     var_bartlett_vs_snr1 = experement.stat_vs_params(
         config_params=config_parametrs1,
-        energy_func=pseudospectrum.approx_bartlett,
+        pseudo_dunc=pseudospectrum.approx_bartlett,
         signal_func=signals.sinus,
         parametr_name="snr",
         stiring_func=model.calculate_stiring_matrix,
@@ -45,7 +45,7 @@ def test_full_experiment():
 
     var_bartlett_vs_snr2 = experement.stat_vs_params(
         config_params=config_parametrs2,
-        energy_func=pseudospectrum.approx_bartlett,
+        pseudo_dunc=pseudospectrum.approx_bartlett,
         signal_func=signals.sinus,
         parametr_name="snr",
         stiring_func=model.calculate_stiring_matrix,
@@ -63,11 +63,11 @@ def test_equality_rng():
 
     p_t1 = signals.sinus(config1)
     e_t1 = signals.calculate_energy(p_t1, config1["time_vector"])
-    noise1 = signals.get_noise(config1, config1["main_rng"], e_t1)
+    noise1 = signals.noise(config1, config1["main_rng"], e_t1)
 
     p_t2 = signals.sinus(config2)
     e_t2 = signals.calculate_energy(p_t2, config2["time_vector"])
-    noise2 = signals.get_noise(config2, config2["main_rng"], e_t2)
+    noise2 = signals.noise(config2, config2["main_rng"], e_t2)
 
     assert np.array_equal(noise1, noise2)
 
@@ -89,12 +89,12 @@ def test_hilbert_channel_matrix():
 
     experement.stat_vs_params(
         config_params=config.init_rng(42),
-        energy_func=capture_matrix,
+        pseudo_dunc=capture_matrix,
         signal_func=signals.sinus,
         stiring_func=model.complex_stiring_matrix,
         parametr_name="realisation_count",
         parametr_values=[1],
         stat_func=np.mean,
-        is_hilbert=True,
+        =True,
     )
     assert np.allclose(matrices[0], expected)

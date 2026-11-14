@@ -46,7 +46,7 @@ NAMING_DICT = {
 TYPE_SIGNALS = ["garmonic", "pulse"]
 
 
-def plot_mean_vs_param(
+def mean_vs_param(
     dict_values: dict,
     config_params: dict,
     parametr_name: str,
@@ -331,11 +331,14 @@ def create_and_save_table(rows: list, columns: list, filename: str, save: bool =
     plt.show()
 
 
-def create_config_table(
+def config_table(
+
+
     config_params: np.ndarray,
 ):
     """Таблица значений параметров графика"""
-
+    from datetime import datetime
+ 
     def round_n(number, k):
         """Округление числа до n значящих цифр"""
         return round(number, int(np.log10(1 / number)) + k)

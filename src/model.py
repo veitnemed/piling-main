@@ -1,15 +1,14 @@
 import numpy as np
-import src.signals as signals 
+import src.signals as signals
+
 
 def gamma_array(sensor_amount: int) -> np.ndarray:
     """Расчёт углов датчиков относительно оси x по их количеству."""
-
     return (2 * np.pi / sensor_amount) * np.arange(sensor_amount)
 
 
 def tau_array(config_parametrs: dict) -> np.ndarray:
     """Расчёт задержек относительно каждого датчика."""
-
     return (config_parametrs["R"] / config_parametrs["c"]) * np.cos(
         config_parametrs["target_phi"] - gamma_array(config_parametrs["M"])
     )
@@ -24,15 +23,11 @@ def avp_signals(p_t: np.ndarray, config_parametrs: dict, energy_signal: float) -
     rng2 = np.random.default_rng(child_seeds[1])
     rng3 = np.random.default_rng(child_seeds[2])
 
-    y0 = p_t + signals.get_noise(
-        config_parametrs, rng1, energy_signal
-    )  # Размер 1 x N.
-
-    y1 = p_t * np.cos(config_parametrs["target_phi"]) + signals.get_noise(
+    y0 = p_t + signals.noise(config_parametrs, rng1, energy_signal)  # Размер 1 x N.
+    y1 = p_t * np.cos(config_parametrs["target_phi"]) + signals.noise(
         config_parametrs, rng2, energy_signal
     )
-
-    y2 = p_t * np.sin(config_parametrs["target_phi"]) + signals.get_noise(
+    y2 = p_t * np.sin(config_parametrs["target_phi"]) + signals.noise(
         config_parametrs, rng3, energy_signal
     )
 
@@ -54,12 +49,12 @@ def channel_matrix(
 
         config_params_copy["time_vector"] = config_params["time_vector"] - tau
         p_t = signal_func(config_params_copy)
-        energy_signal = signals.calculate_energy(
-            p_t, config_params_copy["time_vector"]
-        )
+        energy_signal = signals.calculate_energy(p_t, config_params_copy["time_vector"])
         signals_avp = avp_signals(p_t, config_params_copy, energy_signal)
 
-        sensor_matrix = np.vstack((signals_avp["y0"], signals_avp["y1"], signals_avp["y2"]))
+        sensor_matrix = np.vstack(
+            (signals_avp["y0"], signals_avp["y1"], signals_avp["y2"])
+        )
         channel_matrix[idx * 3 : idx * 3 + 3] = sensor_matrix
 
     return channel_matrix
@@ -67,7 +62,6 @@ def channel_matrix(
 
 def covariation_matrix(matrix: np.ndarray, N: int) -> np.ndarray:
     """Расчёт ковариационной матрицы для комплексных и вещественных данных."""
-
     return (matrix @ matrix.conj().T) / N
 
 
