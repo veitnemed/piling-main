@@ -1,10 +1,8 @@
 import src.configs.config as config
-from src.pseudospectrum import (
-    approx_capon,
-    approx_bartlett,
-)
+import src.pseudospectrum as pseudospectrum
 import numpy as np
-from src.experement import stat_vs_params
+import scipy.signal as signal
+import src.experement as experement
 import src.signals as signals
 import src.model as model
 
@@ -36,18 +34,18 @@ def test_full_experiment():
     config_parametrs2 = config.init_rng()
     config_parametrs1["realisation_count"] = 3
     config_parametrs2["realisation_count"] = 3
-    var_bartlett_vs_snr1 = stat_vs_params(
+    var_bartlett_vs_snr1 = experement.stat_vs_params(
         config_params=config_parametrs1,
-        energy_func=approx_bartlett,
+        energy_func=pseudospectrum.approx_bartlett,
         signal_func=signals.sinus,
         parametr_name="snr",
         stiring_func=model.calculate_stiring_matrix,
         parametr_values=config.SNR_VALUES,
     )
 
-    var_bartlett_vs_snr2 = stat_vs_params(
+    var_bartlett_vs_snr2 = experement.stat_vs_params(
         config_params=config_parametrs2,
-        energy_func=approx_bartlett,
+        energy_func=pseudospectrum.approx_bartlett,
         signal_func=signals.sinus,
         parametr_name="snr",
         stiring_func=model.calculate_stiring_matrix,
@@ -72,3 +70,31 @@ def test_equality_rng():
     noise2 = signals.get_noise(config2, config2["main_rng"], e_t2)
 
     assert np.array_equal(noise1, noise2)
+
+
+def test_hilbert_channel_matrix():
+    config_parametrs = config.init_rng(42)
+    config_parametrs["realisation_count"] = 1
+    taus = model.tau_array(config_parametrs)
+    channels = model.channel_matrix(config_parametrs, taus, signals.sinus)
+    expected = model.covariation_matrix(
+        signal.hilbert(channels.real, axis=1), config_parametrs["N"]
+    )
+
+    matrices = []
+
+    def capture_matrix(W, dir_matrix):
+        matrices.append(W)
+        return np.zeros(len(dir_matrix))
+
+    experement.stat_vs_params(
+        config_params=config.init_rng(42),
+        energy_func=capture_matrix,
+        signal_func=signals.sinus,
+        stiring_func=model.complex_stiring_matrix,
+        parametr_name="realisation_count",
+        parametr_values=[1],
+        stat_func=np.mean,
+        is_hilbert=True,
+    )
+    assert np.allclose(matrices[0], expected)

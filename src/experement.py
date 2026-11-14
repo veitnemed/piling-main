@@ -1,6 +1,7 @@
 """Статистика экспериментов"""
 
 import numpy as np
+import scipy.signal as signal
 import src.configs.config as config
 from collections.abc import Callable
 import src.model as model
@@ -14,6 +15,7 @@ def single_est(
     dir_matrix: np.ndarray,
     target_func: Callable,
     signal_func: Callable,
+    is_hilbert: bool = False,
 ) -> float:
     """Расчёт оценки по одной реализации шума."""
 
@@ -22,6 +24,8 @@ def single_est(
     channel_matrix = model.channel_matrix(
         config_params=config_params, tau_array=taus, signal_func=signal_func
     )
+    if is_hilbert is True:
+        channel_matrix = signal.hilbert(channel_matrix.real, axis=1)
 
     W = model.covariation_matrix(channel_matrix, config_params["N"])
     Energy_values = target_func(W, dir_matrix)
@@ -39,6 +43,7 @@ def list_errors(
     target_func: Callable,
     signal_func: Callable,
     stiring_func: Callable,
+    is_hilbert: bool = False,
 ) -> list:
     """Формирование списка ошибок для каждой реализации шума."""
 
@@ -46,7 +51,7 @@ def list_errors(
 
     return [
         single_error(
-            single_est(config_params, dir_matrix, target_func, signal_func),
+            single_est(config_params, dir_matrix, target_func, signal_func, is_hilbert),
             config_params["target_phi"],
         )
         for _ in range(config_params["realisation_count"])
@@ -68,6 +73,7 @@ def stat_vs_params(
     stat_func: Callable = calculate_variance,
     is_CRN: bool = True,
     is_random_start: bool = False,
+    is_hilbert: bool = False,
 ):
     """Расчёт статистики ошибки для набора значений параметра моделирования."""
     from copy import deepcopy
@@ -89,6 +95,6 @@ def stat_vs_params(
 
         new_config[parametr_name] = value
 
-        lst = list_errors(new_config, energy_func, signal_func, stiring_func)
+        lst = list_errors(new_config, energy_func, signal_func, stiring_func, is_hilbert)
         result.append(stat_func(lst))
     return result

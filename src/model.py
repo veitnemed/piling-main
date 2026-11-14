@@ -1,5 +1,4 @@
 import numpy as np
-import src.estimate as estimate
 import src.signals as signals 
 
 def gamma_array(sensor_amount: int) -> np.ndarray:

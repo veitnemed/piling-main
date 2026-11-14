@@ -26,7 +26,7 @@ F_GARMONIC = 10  # ЦЕНТРАЛЬНАЯ ЧАСТОТА ГАРМОНИЧЕСК�
 CENTER_PULSE = DURATION_ALL / 2  # ЦЕНТР ИМПУЛЬСНОГО СИГНАЛА
 
 A = 0.1  # АМПЛИТУДА СИГНАЛА
-LORENTZ_P_MAX = 0.1 # параметр импульса 
+LORENTZ_P_MAX = 0.1 # параметр импульса
 PHI_STEP = 0.001  # Шаг поиска угла 0.0003
 K = 0.5  # коэффицент для полосы решетки
 
@@ -37,5 +37,67 @@ AMOUNT_PHI = int(2 * np.pi / PHI_STEP)  # Количество значений 
 CONST_RADIAN = (np.pi / 180) ** 2
 
 FIG_SIZE = (14, 6)
+
+def init_comon_params():
+    # ====== ПАРАМЕТРЫ МОДЕЛИ ======
+    # =====================================
+
+    N = 10000  # КОЛИЧЕСТВО ОТСЧЁТОВ
+    FS = 8800  # ЧАСТОТА ДИСКРЕТИЗАЦИИ
+
+    DT = 1 / FS  # ШАГ ДИСКРЕТИЗАЦИИ
+    DF = FS / N  # ШАГ ПО ЧАСТОНОЙ ОСИ
+
+    GLOBAL_SEED = 1  # НАЧАЛЬНОЕ СОСТОЯНИЕ ГЕНЕРАТОРА СЛУЧАЙНЫХ ЧИСЕЛ
+
+    DURATION_ALL = (N - 1) * DT  # ДЛИТЕЛЬНОСТЬ ИМПУЛЬСА
+    SPEED_ON_SOUND = 343.26  # СКОРОСТЬ ЗВУКА
+
+
+    # ====== ПАРАМЕТРЫ КОНФИГУРАЦИИ ======
+    # =====================================
+
+    REALISATION_COUNT =  1000 # КОЛИЧЕСТВО РЕАЛИЗАЦИЙ ШУМА
+    M = 5  # КОЛИЧЕСТВО ДАТЧИКОВ
+    SNR = 2  # ОТНОШЕНИЕ СИГНАЛ/ШУМ
+    BETTA_PULSE = 0.02  # ДЛИТЕЛЬНОСТЬ ИМПУЛЬСНОГО СИГНАЛА
+    F_GARMONIC = 10  # ЦЕНТРАЛЬНАЯ ЧАСТОТА ГАРМОНИЧЕСКОГО СИГНАЛА
+    CENTER_PULSE = DURATION_ALL / 2  # ЦЕНТР ИМПУЛЬСНОГО СИГНАЛА
+
+    A = 0.1  # АМПЛИТУДА СИГНАЛА
+    LORENTZ_P_MAX = 0.1 # параметр импульса
+    PHI_STEP = 0.001  # Шаг поиска угла 0.0003
+    K = 0.5  # коэффицент для полосы решетки
+
+    RADIUS = 0.4  # РАДИУС РЕШЁТКИ АВП
+
+    TARGET_PHI = np.pi / 3  # АЗИМУТ ПОД КОТОРЫМ ПРИХОДИТ ИСГНАЛ (ТО ЧТО ОЦЕНИВАЕМ)
+    AMOUNT_PHI = int(2 * np.pi / PHI_STEP)  # Количество значений угла
+    CONST_RADIAN = (np.pi / 180) ** 2
+    return {
+            "dt": DT,
+            "df": DF,
+            "snr": SNR,
+            "M": M,
+            "duration_all": DURATION_ALL,
+            "N": N,
+            "fs": FS,
+            "R": RADIUS,
+            "f0": F_GARMONIC,
+            "A": A,
+            "p_max": LORENTZ_P_MAX,
+            "c": SPEED_ON_SOUND,
+            "duration_pulse": BETTA_PULSE,
+            "realisation_count": REALISATION_COUNT,
+            "target_phi": TARGET_PHI,
+            "main_seed": GLOBAL_SEED,
+            "center_pulse": CENTER_PULSE,
+            "amount_phi": AMOUNT_PHI,
+            "const_radian": CONST_RADIAN,
+            "k": K
+            # "alpha": comon.ALPHA,
+            # "alpha_rms": comon.RMS_ALPHA,
+        }
+
 # ALPHA = 10
 # RMS_ALPHA = 10
