@@ -15,17 +15,19 @@ def estimate_athimut(phi_vector: np.ndarray, pseudospectrum: np.ndarray) -> floa
 
 def single_est(
     config_params: dict,
-    dir_matrix: np.ndarray,
-    target_func: Callable,
-    signal_func: Callable,) -> float:
+    stiring_matrix: np.ndarray,
+    pseudospectrum_func: Callable,
+    signal_func: Callable,
+) -> float:
     """Расчёт оценки по одной реализации шума."""
 
     taus = model.tau_array(config_params)
     channel_matrix = model.channel_matrix(
-        config_params=config_params, tau_array=taus, signal_func=signal_func)
+        config_params=config_params, tau_array=taus, signal_func=signal_func
+    )
 
     W = model.covariation_matrix(channel_matrix, config_params["N"])
-    Energy_values = target_func(W, dir_matrix)
+    Energy_values = pseudospectrum_func(W, stiring_matrix)
     est = estimate_athimut(config_params["phi_vector"], Energy_values)
     return est
 
@@ -37,9 +39,10 @@ def single_error(est, target_phi):
 
 def list_errors(
     config_params: dict,
-    target_func: Callable,
+    pseudospectrum_func: Callable,
     signal_func: Callable,
-    stiring_func: Callable) -> list:
+    stiring_func: Callable,
+) -> list:
     """Формирование списка ошибок для каждой реализации шума."""
 
     dir_matrix = stiring_func(config_params)
@@ -49,7 +52,7 @@ def list_errors(
             single_est(
                 config_params,
                 dir_matrix,
-                target_func,
+                pseudospectrum_func,
                 signal_func,
             ),
             config_params["target_phi"],
@@ -65,7 +68,7 @@ def calculate_variance(list_errors: list) -> float:
 
 def stat_vs_params(
     config_params: dict,  # Вссе необходимые переменные
-    pseudo_dunc: Callable,
+    pseudospectrum_func: Callable,
     signal_func: Callable,
     stiring_func: Callable,
     parametr_name: str,
@@ -96,7 +99,7 @@ def stat_vs_params(
 
         lst = list_errors(
             new_config,
-            pseudo_dunc,
+            pseudospectrum_func,
             signal_func,
             stiring_func,
         )

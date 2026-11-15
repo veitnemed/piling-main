@@ -24,18 +24,14 @@ def calculate_energy(signal: np.ndarray, time_vector: np.ndarray):
     return np.trapezoid(y=np.abs(signal) ** 2, x=time_vector)
 
 
-def noise_level(
-    energy_signal: np.ndarray, snr: float, duration_all: np.ndarray
-):
+def noise_level(energy_signal: np.ndarray, snr: float, duration_all: np.ndarray):
     """Расчёт СКО шума из отношения энергии сигнала к средней энергии шума."""
 
     return np.sqrt(energy_signal / (duration_all * snr))
 
 
-def noise(config_parametrs: dict, rng: Generator, energy_signal: float) -> np.ndarray:
+def noise(configs: dict, rng: Generator, energy_signal: float) -> np.ndarray:
     """Генерация аддитивного белого гауссовского шума с нулевым средним."""
 
-    sigma = noise_level(
-        energy_signal, config_parametrs["snr"], config_parametrs["duration_all"]
-    )
-    return rng.normal(loc=0, scale=sigma, size=config_parametrs["N"])
+    sigma = noise_level(energy_signal, configs["snr"], configs["duration_all"])
+    return rng.normal(loc=0, scale=sigma, size=configs["N"])

@@ -7,28 +7,28 @@ def gamma_array(sensor_amount: int) -> np.ndarray:
     return (2 * np.pi / sensor_amount) * np.arange(sensor_amount)
 
 
-def tau_array(config_parametrs: dict) -> np.ndarray:
+def tau_array(configs: dict) -> np.ndarray:
     """Расчёт задержек относительно каждого датчика."""
-    return (config_parametrs["R"] / config_parametrs["c"]) * np.cos(
-        config_parametrs["target_phi"] - gamma_array(config_parametrs["M"])
+    return (configs["R"] / configs["c"]) * np.cos(
+        configs["target_phi"] - gamma_array(configs["M"])
     )
 
 
-def avp_signals(p_t: np.ndarray, config_parametrs: dict, energy_signal: float) -> dict:
+def avp_signals(p_t: np.ndarray, configs: dict, energy_signal: float) -> dict:
     """Расчёт значений каналов y0, y1, y2 для АВП."""
 
-    child_seeds = config_parametrs["main_rng"].bit_generator.seed_seq.spawn(3)
+    child_seeds = configs["main_rng"].bit_generator.seed_seq.spawn(3)
 
     rng1 = np.random.default_rng(child_seeds[0])
     rng2 = np.random.default_rng(child_seeds[1])
     rng3 = np.random.default_rng(child_seeds[2])
 
-    y0 = p_t + signals.noise(config_parametrs, rng1, energy_signal)  # Размер 1 x N.
-    y1 = p_t * np.cos(config_parametrs["target_phi"]) + signals.noise(
-        config_parametrs, rng2, energy_signal
+    y0 = p_t + signals.noise(configs, rng1, energy_signal)  # Размер 1 x N.
+    y1 = p_t * np.cos(configs["target_phi"]) + signals.noise(
+        configs, rng2, energy_signal
     )
-    y2 = p_t * np.sin(config_parametrs["target_phi"]) + signals.noise(
-        config_parametrs, rng3, energy_signal
+    y2 = p_t * np.sin(configs["target_phi"]) + signals.noise(
+        configs, rng3, energy_signal
     )
 
     return {"y0": y0, "y1": y1, "y2": y2}

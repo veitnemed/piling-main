@@ -4,6 +4,7 @@ import src.configs.comon as comon
 # ========== КОНФИГУРАЦИЯ =======
 # ================================
 
+
 def create_parameters_config() -> dict:
     """Создание конфигурации"""
     comons = comon.init_comon_params()
@@ -33,11 +34,13 @@ def create_parameters_config() -> dict:
         "phi_values": PHI_VALUES,
         "freq_values": FREQ_VALUES,
         "main_rng": np.random.default_rng(comons["main_seed"]),
-        **comons
+        **comons,
     }
+
 
 # ========== ИНИЦИАЛИЗАЦИЯ =======
 # ========================
+
 
 def init_rng(main_seed: int = comon.init_comon_params()["main_seed"]):
     """Инциализация стартового конфига"""
@@ -48,20 +51,20 @@ def init_rng(main_seed: int = comon.init_comon_params()["main_seed"]):
     return parametrs
 
 
-def restart_rng(config_parametrs: dict) -> dict:
+def restart_rng(configs: dict) -> dict:
     """Сброс генератора"""
     import copy
 
-    new_config = copy.deepcopy(config_parametrs)
+    new_config = copy.deepcopy(configs)
     new_config["main_rng"] = np.random.default_rng(new_config["main_seed"])
     return new_config
 
 
-def shake_rng(config_parametrs: dict) -> dict:
+def shake_rng(configs: dict) -> dict:
     """Случайное значение генератора"""
     import copy
 
-    new_config = copy.deepcopy(config_parametrs)
+    new_config = copy.deepcopy(configs)
     new_config["main_seed"] = None
     new_config["main_rng"] = np.random.default_rng(new_config["main_seed"])
     return new_config

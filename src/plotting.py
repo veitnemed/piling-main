@@ -172,7 +172,7 @@ def mean_vs_param(
     return fig, ax
 
 
-def plot_variance_vs_param(
+def variance_vs_param(
     dict_values: dict,
     config_params: dict,
     parametr_name: str,
@@ -332,13 +332,11 @@ def create_and_save_table(rows: list, columns: list, filename: str, save: bool =
 
 
 def config_table(
-
-
     config_params: np.ndarray,
 ):
     """Таблица значений параметров графика"""
     from datetime import datetime
- 
+
     def round_n(number, k):
         """Округление числа до n значящих цифр"""
         return round(number, int(np.log10(1 / number)) + k)

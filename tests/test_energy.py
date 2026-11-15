@@ -5,6 +5,7 @@ import src.signals as signals
 
 def test_rectangular_pulse_energy():
     """Сравнение энергии сигнала с аналитической формулой."""
+    
     params = config.create_parameters_config()
     A = 2  # Амплитуда
     t_0 = params["duration_all"] / 2  # Центр импульса.

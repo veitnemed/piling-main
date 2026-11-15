@@ -1,4 +1,5 @@
-"""В данном модуле используются функци, связанные со спектральными преобразованием """
+"""В данном модуле используются функци, связанные со спектральными преобразованием"""
+
 import numpy as np
 
 
@@ -22,17 +23,18 @@ def ifft(spectrum: np.ndarray) -> np.ndarray:
     return np.real(complex_signal_back)
 
 
-def f_rms(spectrum: np.ndarray, config_parametrs: dict):
+def f_rms(spectrum: np.ndarray, configs: dict):
     "Расчёт среднеквадратической эффективной частоты."
     return np.abs(
         np.sqrt(
             np.trapezoid(
-                y=(config_parametrs["freq_vector"] * np.abs(spectrum)) ** 2,
-                x=config_parametrs["freq_vector"],
+                y=(configs["freq_vector"] * np.abs(spectrum)) ** 2,
+                x=configs["freq_vector"],
             )
-            / (np.trapezoid(y=np.abs(spectrum) ** 2, x=config_parametrs["freq_vector"]))
+            / (np.trapezoid(y=np.abs(spectrum) ** 2, x=configs["freq_vector"]))
         )
     )
+
 
 def fft(signal: np.ndarray):
     """Вычисление комплексного амплитудного спектра с помощью БПФ."""
