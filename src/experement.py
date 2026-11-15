@@ -3,8 +3,7 @@
 from collections.abc import Callable
 
 import numpy as np
-import scipy.signal as signal
-import src.configs.config as config
+import src.config as config
 import src.model as model
 
 

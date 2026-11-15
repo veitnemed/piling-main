@@ -1,10 +1,11 @@
-import src.configs.config as config
+import src.config as config
 import src.pseudospectrum as pseudospectrum
 import numpy as np
 import scipy.signal as signal
 import src.experement as experement
 import src.signals as signals
 import src.model as model
+import src.steerings as steerings
 
 
 def test_some_avp_signals():
@@ -39,7 +40,7 @@ def test_full_experiment():
         pseudospectrum_func=pseudospectrum.approx_bartlett,
         signal_func=signals.sinus,
         parametr_name="snr",
-        stiring_func=model.calculate_stiring_matrix,
+        stiring_func=steerings.calculate_stiring_matrix,
         parametr_values=configs1["snr_values"],
     )
 
@@ -48,7 +49,7 @@ def test_full_experiment():
         pseudospectrum_func=pseudospectrum.approx_bartlett,
         signal_func=signals.sinus,
         parametr_name="snr",
-        stiring_func=model.calculate_stiring_matrix,
+        stiring_func=steerings.calculate_stiring_matrix,
         parametr_values=configs2["snr_values"],
     )
     assert np.array_equal(var_bartlett_vs_snr1, var_bartlett_vs_snr2)

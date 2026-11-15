@@ -1,5 +1,5 @@
 import numpy as np
-import src.configs.config as config
+import src.config as config
 import src.spectrum as spectrum
 import src.signals as signals
 

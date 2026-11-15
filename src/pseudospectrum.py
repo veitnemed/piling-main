@@ -1,6 +1,5 @@
 import numpy as np
 
-
 def exact_bartlett(W: np.ndarray, complex_stiring_matrix: np.ndarray) -> list:
     """Расчёт энергетического спектра Бартлетта с комплексным вектором."""
     return np.sum(
@@ -22,7 +21,6 @@ def approx_capon(W: np.ndarray, dir_matrix: np.ndarray) -> list:
     W_inv = np.linalg.inv(W)
 
     return 1 / (np.sum((dir_matrix @ W_inv) * dir_matrix, axis=1))
-
 
 
 def approx_bartlett(W: np.ndarray, dir_matrix: np.ndarray) -> list:
