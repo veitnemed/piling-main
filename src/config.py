@@ -19,11 +19,11 @@ def init_comon_params():
     # ====== ПАРАМЕТРЫ КОНФИГУРАЦИИ ======
     # =====================================
 
-    REALISATION_COUNT =  10 # КОЛИЧЕСТВО РЕАЛИЗАЦИЙ ШУМА
-    M = 5  # КОЛИЧЕСТВО ДАТЧИКОВ
+    REALISATION_COUNT =  1000 # КОЛИЧЕСТВО РЕАЛИЗАЦИЙ ШУМА
+    M = 3  # КОЛИЧЕСТВО ДАТЧИКОВ
     SNR = 2  # ОТНОШЕНИЕ СИГНАЛ/ШУМ
     BETTA_PULSE = 0.02  # ДЛИТЕЛЬНОСТЬ ИМПУЛЬСНОГО СИГНАЛА
-    F_GARMONIC = 10  # ЦЕНТРАЛЬНАЯ ЧАСТОТА ГАРМОНИЧЕСКОГО СИГНАЛА
+    F_GARMONIC =40# ЦЕНТРАЛЬНАЯ ЧАСТОТА ГАРМОНИЧЕСКОГО СИГНАЛА
     CENTER_PULSE = DURATION_ALL / 2  # ЦЕНТР ИМПУЛЬСНОГО СИГНАЛА
 
     A = 0.1  # АМПЛИТУДА СИГНАЛА
@@ -81,7 +81,7 @@ def create_parameters_config() -> dict:
     NOISE_LEVEL_VALUES = comons["A"] / np.sqrt(SNR_VALUES)
     RADIUS_VALUES = np.linspace(0.1, 1, 10)
     SDN_VALUES = comons["A"] / np.sqrt(np.array(SNR_VALUES))
-    PHI_VALUES = np.linspace(0, 2 * np.pi, 18, endpoint=True)
+    PHI_VALUES = np.linspace(0, 2 * np.pi, 9, endpoint=True)
     FREQ_VALUES = np.linspace(1, 100, 25)
 
     return {
