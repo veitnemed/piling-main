@@ -1,7 +1,6 @@
 import src.config as config
 import src.pseudospectrum as pseudospectrum
 import numpy as np
-import scipy.signal as signal
 import src.experement as experement
 import src.signals as signals
 import src.model as model
@@ -30,6 +29,7 @@ def test_different_avp_signals():
     assert any(not np.array_equal(signals1[key], signals2[key]) for key in signals1)
 
 
+
 def test_full_experiment():
     configs1 = config.init_rng()
     configs2 = config.init_rng()
@@ -52,7 +52,38 @@ def test_full_experiment():
         stiring_func=steerings.calculate_stiring_matrix,
         parametr_values=configs2["snr_values"],
     )
-    assert np.array_equal(var_bartlett_vs_snr1, var_bartlett_vs_snr2)
+    assert np.array_equal(var_bartlett_vs_snr1, var_bartlett_vs_snr2) is True
+
+def test_random_start_for_full_experement():
+    result = []
+
+    for _ in range(10):
+        
+        configs1 = config.init_rng()
+        configs2 = config.init_rng()
+        configs1["realisation_count"] = 3
+        configs2["realisation_count"] = 3
+        var_bartlett_vs_snr1 = experement.stat_vs_params(
+        config_params=configs1,
+        pseudospectrum_func=pseudospectrum.approx_bartlett,
+        signal_func=signals.sinus,
+        parametr_name="snr",
+        stiring_func=steerings.calculate_stiring_matrix,
+        parametr_values=configs1["snr_values"],
+        is_random_start = True 
+    )
+
+    var_bartlett_vs_snr2 = experement.stat_vs_params(
+        config_params=configs2,
+        pseudospectrum_func=pseudospectrum.approx_bartlett,
+        signal_func=signals.sinus,
+        parametr_name="snr",
+        stiring_func=steerings.calculate_stiring_matrix,
+        parametr_values=configs2["snr_values"],
+        is_random_start = True
+    )
+    result.append(np.array_equal(var_bartlett_vs_snr1, var_bartlett_vs_snr2) is False)
+    assert any(result)
 
 
 def test_equality_rng():
