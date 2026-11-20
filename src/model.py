@@ -9,25 +9,25 @@ def gamma_array(sensor_amount: int) -> np.ndarray:
 
 def tau_array(configs: dict) -> np.ndarray:
     """Расчёт задержек относительно каждого датчика."""
-    return (configs["R"] / configs["c"]) * np.cos(
-        configs["target_phi"] - gamma_array(configs["M"])
+    return (configs.R / configs.c) * np.cos(
+        configs.target_phi - gamma_array(configs.M)
     )
 
 
 def avp_signals(p_t: np.ndarray, configs: dict, energy_signal: float) -> dict:
     """Расчёт значений каналов y0, y1, y2 для АВП."""
 
-    child_seeds = configs["main_rng"].bit_generator.seed_seq.spawn(3)
+    child_seeds = configs.main_rng.bit_generator.seed_seq.spawn(3)
 
     rng1 = np.random.default_rng(child_seeds[0])
     rng2 = np.random.default_rng(child_seeds[1])
     rng3 = np.random.default_rng(child_seeds[2])
 
     y0 = p_t + signals.noise(configs, rng1, energy_signal)  # Размер 1 x N.
-    y1 = p_t * np.cos(configs["target_phi"]) + signals.noise(
+    y1 = p_t * np.cos(configs.target_phi) + signals.noise(
         configs, rng2, energy_signal
     )
-    y2 = p_t * np.sin(configs["target_phi"]) + signals.noise(
+    y2 = p_t * np.sin(configs.target_phi"]) + signals.noise(
         configs, rng3, energy_signal
     )
 
@@ -41,13 +41,13 @@ def channel_matrix(
 
     config_params_copy = config_params.copy()
     channel_matrix = np.zeros(
-        (3 * config_params_copy["M"], config_params_copy["N"]), dtype=complex
+        (3 * config_params_copy.M, config_params_copy.N), dtype=complex
     )  # Создаём нулевую матрицу размера 3M x N.
 
     for idx, tau in enumerate(tau_array):
         """Сдвигаем временной вектор на задержку текущего датчика."""
 
-        config_params_copy["time_vector"] = config_params["time_vector"] - tau
+        config_params_copy.time_vector = config_params.time_vector - tau
         p_t = signal_func(config_params_copy)
         energy_signal = signals.calculate_energy(p_t, config_params_copy["time_vector"])
         signals_avp = avp_signals(p_t, config_params_copy, energy_signal)

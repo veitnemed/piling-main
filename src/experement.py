@@ -78,7 +78,8 @@ def stat_vs_params(
 ):
     """Расчёт статистики ошибки для набора значений параметра моделирования."""
     from copy import deepcopy
-
+    if parametr_name not in ("M","snr","R","f0","target_phi"):
+        raise KeyError(f"Prametr {parametr_name} is not deferent ")
     result = []
     new_config = (
         config.shake_rng(config_params)

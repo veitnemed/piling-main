@@ -1,4 +1,5 @@
 import numpy as np
+from types import SimpleNamespace
 
 def init_comon_params():
     # ====== ПАРАМЕТРЫ МОДЕЛИ ======
@@ -36,6 +37,7 @@ def init_comon_params():
     TARGET_PHI = np.pi / 3  # АЗИМУТ ПОД КОТОРЫМ ПРИХОДИТ ИСГНАЛ (ТО ЧТО ОЦЕНИВАЕМ)
     AMOUNT_PHI = int(2 * np.pi / PHI_STEP)  # Количество значений угла
     CONST_RADIAN = (np.pi / 180) ** 2
+
     return {
             "dt": DT,
             "df": DF,
@@ -84,7 +86,7 @@ def create_parameters_config() -> dict:
     PHI_VALUES = np.linspace(0, 2 * np.pi, 9, endpoint=True)
     FREQ_VALUES = np.linspace(1, 100, 25)
 
-    return {
+    return SimpleNamespace({
         "time_vector": TIME_VECTOR,
         "freq_vector": FREQ_VECTOR,
         "phi_vector": PHI_VECTOR,
@@ -97,7 +99,7 @@ def create_parameters_config() -> dict:
         "freq_values": FREQ_VALUES,
         "main_rng": np.random.default_rng(comons["main_seed"]),
         **comons,
-    }
+    })
 
 
 # ========== ИНИЦИАЛИЗАЦИЯ =======
@@ -108,8 +110,8 @@ def init_rng(main_seed: int = init_comon_params()["main_seed"]):
     """Инциализация стартового конфига"""
 
     parametrs = create_parameters_config()
-    parametrs["main_rng"] = np.random.default_rng(main_seed)
-    parametrs["main_seed"] = main_seed
+    parametrs.main_rng = np.random.default_rng(main_seed)
+    parametrs.main_seed = main_seed
     return parametrs
 
 
@@ -118,7 +120,7 @@ def restart_rng(configs: dict) -> dict:
     import copy
 
     new_config = copy.deepcopy(configs)
-    new_config["main_rng"] = np.random.default_rng(new_config["main_seed"])
+    new_config.main_rng = np.random.default_rng(new_config.main_seed)
     return new_config
 
 
@@ -127,6 +129,6 @@ def shake_rng(configs: dict) -> dict:
     import copy
 
     new_config = copy.deepcopy(configs)
-    new_config["main_seed"] = np.random.randint(1,1e6)
-    new_config["main_rng"] = np.random.default_rng(new_config["main_seed"])
+    new_config.main_seed = np.random.randint(1,1e6)
+    new_config.main_rng = np.random.default_rng(new_config.main_seed)
     return new_config
