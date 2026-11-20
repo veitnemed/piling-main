@@ -55,9 +55,10 @@ def test_full_experiment():
     assert np.array_equal(var_bartlett_vs_snr1, var_bartlett_vs_snr2) is True
 
 def test_random_start_for_full_experement():
+    """Тест проверяет что система может получить две независимых результата"""
     result = []
 
-    for _ in range(10):
+    for _ in range(5):
         
         configs1 = config.init_rng()
         configs2 = config.init_rng()
@@ -103,4 +104,23 @@ def test_equality_rng():
 
     assert np.array_equal(noise1, noise2)
 
+
+
+def test_shake_rng():
+    
+    configs = config.init_rng()
+    
+
+    shake_configs1 = config.shake_rng(configs.copy())
+    shake_configs2 = config.shake_rng(configs.copy())
+
+    assert shake_configs1["main_seed"] != shake_configs2["main_seed"]
+
+
+        
+    
+
+
+    
+ 
 

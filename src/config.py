@@ -127,6 +127,6 @@ def shake_rng(configs: dict) -> dict:
     import copy
 
     new_config = copy.deepcopy(configs)
-    new_config["main_seed"] = None
+    new_config["main_seed"] = np.random.randint(1,1e6)
     new_config["main_rng"] = np.random.default_rng(new_config["main_seed"])
     return new_config
