@@ -1,20 +1,22 @@
+from types import SimpleNamespace
+
 import numpy as np
 from numpy.random import Generator
 
 
-def lorenth(config_params: dict) -> np.ndarray:
+def lorenth(config_params: SimpleNamespace) -> np.ndarray:
     """Расчёт импульса Лоренца по заданным параметрам."""
-    tau = config_params["duration_pulse"]
-    return config_params["p_max"] * (
+    tau = config_params.duration_pulse
+    return config_params.p_max * (
         tau**2
-        / (tau**2 + (config_params["time_vector"] - config_params["center_pulse"]) ** 2)
+        / (tau**2 + (config_params.time_vector - config_params.center_pulse) ** 2)
     )
 
-def sinus(config_params: dict) -> np.ndarray:
+def sinus(config_params: SimpleNamespace) -> np.ndarray:
     """Расчёт гармонического сигнала в каждый момент времени."""
 
-    return config_params["A"] * np.sin(
-        config_params["time_vector"] * (2 * np.pi * config_params["f0"])
+    return config_params.A * np.sin(
+        config_params.time_vector * (2 * np.pi * config_params.f0)
     )
 
 def calculate_energy(signal: np.ndarray, time_vector: np.ndarray):
@@ -28,8 +30,8 @@ def noise_level(energy_signal: np.ndarray, snr: float, duration_all: np.ndarray)
     return np.sqrt(energy_signal / (duration_all * snr))
 
 
-def noise(configs: dict, rng: Generator, energy_signal: float) -> np.ndarray:
+def noise(configs: SimpleNamespace, rng: Generator, energy_signal: float) -> np.ndarray:
     """Генерация аддитивного белого гауссовского шума с нулевым средним."""
 
-    sigma = noise_level(energy_signal, configs["snr"], configs["duration_all"])
-    return rng.normal(loc=0, scale=sigma, size=configs["N"])
+    sigma = noise_level(energy_signal, configs.snr, configs.duration_all)
+    return rng.normal(loc=0, scale=sigma, size=configs.N)

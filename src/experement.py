@@ -1,6 +1,7 @@
 """Статистика экспериментов"""
 
 from collections.abc import Callable
+from types import SimpleNamespace
 
 import numpy as np
 import src.config as config
@@ -13,7 +14,7 @@ def estimate_athimut(phi_vector: np.ndarray, pseudospectrum: np.ndarray) -> floa
 
 
 def single_est(
-    config_params: dict,
+    config_params: SimpleNamespace,
     stiring_matrix: np.ndarray,
     pseudospectrum_func: Callable,
     signal_func: Callable,
@@ -25,9 +26,9 @@ def single_est(
         config_params=config_params, tau_array=taus, signal_func=signal_func
     )
 
-    W = model.covariation_matrix(channel_matrix, config_params["N"])
+    W = model.covariation_matrix(channel_matrix, config_params.N)
     Energy_values = pseudospectrum_func(W, stiring_matrix)
-    est = estimate_athimut(config_params["phi_vector"], Energy_values)
+    est = estimate_athimut(config_params.phi_vector, Energy_values)
     return est
 
 
@@ -37,7 +38,7 @@ def single_error(est, target_phi):
 
 
 def list_errors(
-    config_params: dict,
+    config_params: SimpleNamespace,
     pseudospectrum_func: Callable,
     signal_func: Callable,
     stiring_func: Callable,
@@ -54,9 +55,9 @@ def list_errors(
                 pseudospectrum_func,
                 signal_func,
             ),
-            config_params["target_phi"],
+            config_params.target_phi,
         )
-        for _ in range(config_params["realisation_count"])
+        for _ in range(config_params.realisation_count)
     ]
 
 
@@ -66,7 +67,7 @@ def calculate_variance(list_errors: list) -> float:
 
 
 def stat_vs_params(
-    config_params: dict,  # Вссе необходимые переменные
+    config_params: SimpleNamespace,  # Вссе необходимые переменные
     pseudospectrum_func: Callable,
     signal_func: Callable,
     stiring_func: Callable,
@@ -90,12 +91,12 @@ def stat_vs_params(
     for value in parametr_values:
 
         if is_CRN is True:
-            new_config = config.restart_rng(new_config.copy())
+            new_config = config.restart_rng(new_config)
 
-        if parametr_name not in new_config:
+        if not hasattr(new_config, parametr_name):
             raise KeyError(f"Неизвестный параметр {parametr_name}")
 
-        new_config[parametr_name] = value
+        setattr(new_config, parametr_name, value)
 
         lst = list_errors(
             new_config,

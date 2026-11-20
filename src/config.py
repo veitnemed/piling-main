@@ -69,7 +69,7 @@ def init_comon_params():
 # ================================
 
 
-def create_parameters_config() -> dict:
+def create_parameters_config() -> SimpleNamespace:
     """Создание конфигурации"""
     comons = init_comon_params()
 
@@ -86,20 +86,20 @@ def create_parameters_config() -> dict:
     PHI_VALUES = np.linspace(0, 2 * np.pi, 9, endpoint=True)
     FREQ_VALUES = np.linspace(1, 100, 25)
 
-    return SimpleNamespace({
-        "time_vector": TIME_VECTOR,
-        "freq_vector": FREQ_VECTOR,
-        "phi_vector": PHI_VECTOR,
-        "sensor_values": SENSOR_VALUES,
-        "snr_values": SNR_VALUES,
-        "noise_level_values": NOISE_LEVEL_VALUES,
-        "radius_values": RADIUS_VALUES,
-        "sdn_values": SDN_VALUES,
-        "phi_values": PHI_VALUES,
-        "freq_values": FREQ_VALUES,
-        "main_rng": np.random.default_rng(comons["main_seed"]),
+    return SimpleNamespace(
+        time_vector=TIME_VECTOR,
+        freq_vector=FREQ_VECTOR,
+        phi_vector=PHI_VECTOR,
+        sensor_values=SENSOR_VALUES,
+        snr_values=SNR_VALUES,
+        noise_level_values=NOISE_LEVEL_VALUES,
+        radius_values=RADIUS_VALUES,
+        sdn_values=SDN_VALUES,
+        phi_values=PHI_VALUES,
+        freq_values=FREQ_VALUES,
+        main_rng=np.random.default_rng(comons["main_seed"]),
         **comons,
-    })
+    )
 
 
 # ========== ИНИЦИАЛИЗАЦИЯ =======
@@ -115,7 +115,7 @@ def init_rng(main_seed: int = init_comon_params()["main_seed"]):
     return parametrs
 
 
-def restart_rng(configs: dict) -> dict:
+def restart_rng(configs: SimpleNamespace) -> SimpleNamespace:
     """Сброс генератора"""
     import copy
 
@@ -124,7 +124,7 @@ def restart_rng(configs: dict) -> dict:
     return new_config
 
 
-def shake_rng(configs: dict) -> dict:
+def shake_rng(configs: SimpleNamespace) -> SimpleNamespace:
     """Случайное значение генератора"""
     import copy
 

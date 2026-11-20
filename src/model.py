@@ -1,3 +1,6 @@
+from copy import copy
+from types import SimpleNamespace
+
 import numpy as np
 import src.signals as signals
 
@@ -7,14 +10,14 @@ def gamma_array(sensor_amount: int) -> np.ndarray:
     return (2 * np.pi / sensor_amount) * np.arange(sensor_amount)
 
 
-def tau_array(configs: dict) -> np.ndarray:
+def tau_array(configs: SimpleNamespace) -> np.ndarray:
     """Расчёт задержек относительно каждого датчика."""
     return (configs.R / configs.c) * np.cos(
         configs.target_phi - gamma_array(configs.M)
     )
 
 
-def avp_signals(p_t: np.ndarray, configs: dict, energy_signal: float) -> dict:
+def avp_signals(p_t: np.ndarray, configs: SimpleNamespace, energy_signal: float) -> dict:
     """Расчёт значений каналов y0, y1, y2 для АВП."""
 
     child_seeds = configs.main_rng.bit_generator.seed_seq.spawn(3)
@@ -27,7 +30,7 @@ def avp_signals(p_t: np.ndarray, configs: dict, energy_signal: float) -> dict:
     y1 = p_t * np.cos(configs.target_phi) + signals.noise(
         configs, rng2, energy_signal
     )
-    y2 = p_t * np.sin(configs.target_phi"]) + signals.noise(
+    y2 = p_t * np.sin(configs.target_phi) + signals.noise(
         configs, rng3, energy_signal
     )
 
@@ -35,11 +38,11 @@ def avp_signals(p_t: np.ndarray, configs: dict, energy_signal: float) -> dict:
 
 
 def channel_matrix(
-    config_params: dict, tau_array: np.ndarray, signal_func
+    config_params: SimpleNamespace, tau_array: np.ndarray, signal_func
 ) -> np.ndarray:
     """Матрица 3M x N для трёх каналов каждого датчика АВП."""
 
-    config_params_copy = config_params.copy()
+    config_params_copy = copy(config_params)
     channel_matrix = np.zeros(
         (3 * config_params_copy.M, config_params_copy.N), dtype=complex
     )  # Создаём нулевую матрицу размера 3M x N.
@@ -49,7 +52,7 @@ def channel_matrix(
 
         config_params_copy.time_vector = config_params.time_vector - tau
         p_t = signal_func(config_params_copy)
-        energy_signal = signals.calculate_energy(p_t, config_params_copy["time_vector"])
+        energy_signal = signals.calculate_energy(p_t, config_params_copy.time_vector)
         signals_avp = avp_signals(p_t, config_params_copy, energy_signal)
 
         sensor_matrix = np.vstack(

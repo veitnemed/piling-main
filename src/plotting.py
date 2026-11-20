@@ -1,3 +1,5 @@
+from types import SimpleNamespace
+
 import numpy as np
 from matplotlib import pyplot as plt
 import src.model as model
@@ -48,7 +50,7 @@ TYPE_SIGNALS = ["garmonic", "pulse"]
 
 def mean_vs_param(
     dict_values: dict,
-    config_params: dict,
+    config_params: SimpleNamespace,
     parametr_name: str,
     parametr_values: np.ndarray | list,
     delta_time: float = 0,
@@ -114,21 +116,21 @@ def mean_vs_param(
         info += f"Signal type: {type_signal.replace('garmonic', 'harmonic')}\n"
 
     if type_signal == "garmonic":
-        info += f"Signal frequency: {config_params['f0']} Hz\n"
+        info += f"Signal frequency: {config_params.f0} Hz\n"
 
     if parametr_name != "R":
-        info += f"Array radius: {config_params['R']:.2f} m\n"
+        info += f"Array radius: {config_params.R:.2f} m\n"
     if parametr_name != "M":
-        info += f"Sensor count: {config_params['M']}\n"
+        info += f"Sensor count: {config_params.M}\n"
     if parametr_name != "snr":
-        info += f"SNR: {config_params['snr']} (linear)\n"
+        info += f"SNR: {config_params.snr} (linear)\n"
     info += (
         f"{NAMING_DICT[parametr_name]}: {parametr_values[0]:.2f} "
         f"to {parametr_values[-1]:.2f} ({len(parametr_values)} points)\n"
     )
-    info += f"Search angles: {len(config_params['phi_vector'])}\n"
-    info += f"Noise realizations: {config_params['realisation_count']}\n"
-    info += f"Seed: {config_params['main_seed']}\n"
+    info += f"Search angles: {len(config_params.phi_vector)}\n"
+    info += f"Noise realizations: {config_params.realisation_count}\n"
+    info += f"Seed: {config_params.main_seed}\n"
     info += f"Computation time: {delta_time:.2f} s"
 
     ax.text(
@@ -165,7 +167,7 @@ def mean_vs_param(
     )
     if save is True:
         plt.savefig(
-            fname=f"attachment/images/report/mean_{parametr_name}_{config_params['realisation_count']}",
+            fname=f"attachment/images/report/mean_{parametr_name}_{config_params.realisation_count}",
             bbox_inches="tight",
             dpi=300,
         )
@@ -174,7 +176,7 @@ def mean_vs_param(
 
 def variance_vs_param(
     dict_values: dict,
-    config_params: dict,
+    config_params: SimpleNamespace,
     parametr_name: str,
     parametr_values: np.ndarray | list,
     delta_time: float = 0,
@@ -243,21 +245,21 @@ def variance_vs_param(
         info += f"Signal type: {type_signal.replace('garmonic', 'harmonic')}\n"
 
     if type_signal == "garmonic":
-        info += f"Signal frequency: {config_params['f0']} Hz\n"
+        info += f"Signal frequency: {config_params.f0} Hz\n"
 
     if parametr_name != "R":
-        info += f"Array radius: {config_params['R']:.2f} m\n"
+        info += f"Array radius: {config_params.R:.2f} m\n"
     if parametr_name != "M":
-        info += f"Sensor count: {config_params['M']}\n"
+        info += f"Sensor count: {config_params.M}\n"
     if parametr_name != "snr":
-        info += f"SNR: {config_params['snr']} (linear)\n"
+        info += f"SNR: {config_params.snr} (linear)\n"
     info += (
         f"{NAMING_DICT[parametr_name]}: {parametr_values[0]:.2f} "
         f"to {parametr_values[-1]:.2f} ({len(parametr_values)} points)\n"
     )
-    info += f"Search angles: {len(config_params['phi_vector'])}\n"
-    info += f"Noise realizations: {config_params['realisation_count']}\n"
-    info += f"Seed: {config_params['main_seed']}\n"
+    info += f"Search angles: {len(config_params.phi_vector)}\n"
+    info += f"Noise realizations: {config_params.realisation_count}\n"
+    info += f"Seed: {config_params.main_seed}\n"
     info += f"Computation time: {delta_time:.2f} s"
 
     ax.text(
@@ -294,7 +296,7 @@ def variance_vs_param(
     )
     if save is True:
         plt.savefig(
-            fname=f"attachment/images/report/var_{parametr_name}_{config_params['realisation_count']}",
+            fname=f"attachment/images/report/var_{parametr_name}_{config_params.realisation_count}",
             bbox_inches="tight",
             dpi=300,
         )
@@ -332,7 +334,7 @@ def create_and_save_table(rows: list, columns: list, filename: str, save: bool =
 
 
 def config_table(
-    config_params: np.ndarray,
+    config_params: SimpleNamespace,
 ):
     """Таблица значений параметров графика"""
     from datetime import datetime
@@ -344,7 +346,7 @@ def config_table(
     columns = ["Parameter", "Value"]
     rows = [
         [key, round_n(value, 2)]
-        for key, value in sorted(config_params.items())
+        for key, value in sorted(vars(config_params).items())
         if isinstance(value, (int, float, np.integer, np.floating))
         and not isinstance(value, (bool, np.bool_))
     ]
@@ -373,15 +375,15 @@ def config_table(
     plt.show()
 
 
-def show_geometry_avp(configs: dict):
+def show_geometry_avp(configs: SimpleNamespace):
     """Построение геометрии акустической векторной решётки."""
 
-    r = configs["R"]
+    r = configs.R
 
-    x = r * np.sin(2 * np.pi * configs["time_vector"])
-    y = r * np.cos(2 * np.pi * configs["time_vector"])
+    x = r * np.sin(2 * np.pi * configs.time_vector)
+    y = r * np.cos(2 * np.pi * configs.time_vector)
 
-    gamma_arr = model.gamma_array(configs["M"])
+    gamma_arr = model.gamma_array(configs.M)
     tau_arr = list(model.tau_array(configs) * 1e3)  # Миллисекунды.
     tau_mks = [round(float(tau), 1) for tau in tau_arr]
 
@@ -422,8 +424,8 @@ def show_geometry_avp(configs: dict):
             },
         )
 
-    x2 = r * np.cos(configs["target_phi"])
-    y2 = r * np.sin(configs["target_phi"])
+    x2 = r * np.cos(configs.target_phi)
+    y2 = r * np.sin(configs.target_phi)
     x3 = r * np.cos(3.3)
     y3 = r * np.sin(3.3)
     x4 = 0.5 * r * np.cos(3.3)
@@ -439,7 +441,7 @@ def show_geometry_avp(configs: dict):
     ax.text(
         x2 * 1.6,
         y2 * 1.52 + 2 * d,
-        rf"Source (${(configs["target_phi"]*180/np.pi):.0f}^\circ$)",
+        rf"Source (${(configs.target_phi*180/np.pi):.0f}^\circ$)",
         fontsize=14,
         color="black",
     )

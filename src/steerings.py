@@ -1,3 +1,6 @@
+from copy import copy
+from types import SimpleNamespace
+
 import numpy as np
 import src.model as model
 
@@ -16,15 +19,15 @@ def complex_stiring_vector(
     ).T
 
 
-def complex_stiring_matrix(configs: dict) -> np.ndarray:
+def complex_stiring_matrix(configs: SimpleNamespace) -> np.ndarray:
     """Рассчёт матрицы стиринг-векторов"""
     res = []
 
-    for phi in configs["phi_vector"]:
-        config_copy = configs.copy()
-        config_copy["target_phi"] = phi
+    for phi in configs.phi_vector:
+        config_copy = copy(configs)
+        config_copy.target_phi = phi
         taus = model.tau_array(config_copy)
-        res.append(complex_stiring_vector(phi, taus, configs["f0"], configs["M"]))
+        res.append(complex_stiring_vector(phi, taus, configs.f0, configs.M))
     return np.array(res)
 
 
@@ -33,11 +36,11 @@ def calculate_stiring_vector(phi: float, M: int) -> np.ndarray:
     return np.array([1, np.cos(phi), np.sin(phi)] * M).T
 
 
-def calculate_stiring_matrix(config_params: dict):
+def calculate_stiring_matrix(config_params: SimpleNamespace):
     """Рассчёт матрицы направляющих векторов"""
     return np.array(
         [
-            calculate_stiring_vector(phi, config_params["M"])
-            for phi in config_params["phi_vector"]
+            calculate_stiring_vector(phi, config_params.M)
+            for phi in config_params.phi_vector
         ]
     )

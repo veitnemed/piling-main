@@ -1,5 +1,7 @@
 """В данном модуле используются функци, связанные со спектральными преобразованием"""
 
+from types import SimpleNamespace
+
 import numpy as np
 
 
@@ -23,15 +25,15 @@ def ifft(spectrum: np.ndarray) -> np.ndarray:
     return np.real(complex_signal_back)
 
 
-def f_rms(spectrum: np.ndarray, configs: dict):
+def f_rms(spectrum: np.ndarray, configs: SimpleNamespace):
     "Расчёт среднеквадратической эффективной частоты."
     return np.abs(
         np.sqrt(
             np.trapezoid(
-                y=(configs["freq_vector"] * np.abs(spectrum)) ** 2,
-                x=configs["freq_vector"],
+                y=(configs.freq_vector * np.abs(spectrum)) ** 2,
+                x=configs.freq_vector,
             )
-            / (np.trapezoid(y=np.abs(spectrum) ** 2, x=configs["freq_vector"]))
+            / (np.trapezoid(y=np.abs(spectrum) ** 2, x=configs.freq_vector))
         )
     )
 

@@ -11,7 +11,7 @@ def test_some_avp_signals():
     configs = config.init_rng(42)
     configs1 = config.init_rng(42)
     p_t = signals.sinus(configs)
-    e_t = signals.calculate_energy(p_t, configs["time_vector"])
+    e_t = signals.calculate_energy(p_t, configs.time_vector)
 
     signals1 = model.avp_signals(p_t, configs, e_t)
     signals2 = model.avp_signals(p_t, configs1, e_t)
@@ -21,7 +21,7 @@ def test_some_avp_signals():
 def test_different_avp_signals():
     configs = config.init_rng(1)
     p_t = signals.sinus(configs)
-    e_t = signals.calculate_energy(p_t, configs["time_vector"])
+    e_t = signals.calculate_energy(p_t, configs.time_vector)
     signals1 = model.avp_signals(p_t, configs, e_t)
 
     configs1 = config.init_rng(2)
@@ -33,15 +33,15 @@ def test_different_avp_signals():
 def test_full_experiment():
     configs1 = config.init_rng()
     configs2 = config.init_rng()
-    configs1["realisation_count"] = 3
-    configs2["realisation_count"] = 3
+    configs1.realisation_count = 3
+    configs2.realisation_count = 3
     var_bartlett_vs_snr1 = experement.stat_vs_params(
         config_params=configs1,
         pseudospectrum_func=pseudospectrum.approx_bartlett,
         signal_func=signals.sinus,
         parametr_name="snr",
         stiring_func=steerings.calculate_stiring_matrix,
-        parametr_values=configs1["snr_values"],
+        parametr_values=configs1.snr_values,
     )
 
     var_bartlett_vs_snr2 = experement.stat_vs_params(
@@ -50,7 +50,7 @@ def test_full_experiment():
         signal_func=signals.sinus,
         parametr_name="snr",
         stiring_func=steerings.calculate_stiring_matrix,
-        parametr_values=configs2["snr_values"],
+        parametr_values=configs2.snr_values,
     )
     assert np.array_equal(var_bartlett_vs_snr1, var_bartlett_vs_snr2) is True
 
@@ -62,15 +62,15 @@ def test_random_start_for_full_experement():
         
         configs1 = config.init_rng()
         configs2 = config.init_rng()
-        configs1["realisation_count"] = 3
-        configs2["realisation_count"] = 3
+        configs1.realisation_count = 3
+        configs2.realisation_count = 3
         var_bartlett_vs_snr1 = experement.stat_vs_params(
         config_params=configs1,
         pseudospectrum_func=pseudospectrum.approx_bartlett,
         signal_func=signals.sinus,
         parametr_name="snr",
         stiring_func=steerings.calculate_stiring_matrix,
-        parametr_values=configs1["snr_values"],
+        parametr_values=configs1.snr_values,
         is_random_start = True 
     )
 
@@ -80,7 +80,7 @@ def test_random_start_for_full_experement():
         signal_func=signals.sinus,
         parametr_name="snr",
         stiring_func=steerings.calculate_stiring_matrix,
-        parametr_values=configs2["snr_values"],
+        parametr_values=configs2.snr_values,
         is_random_start = True
     )
     result.append(np.array_equal(var_bartlett_vs_snr1, var_bartlett_vs_snr2) is False)
@@ -95,12 +95,12 @@ def test_equality_rng():
     config2 = config.restart_rng(original)
 
     p_t1 = signals.sinus(config1)
-    e_t1 = signals.calculate_energy(p_t1, config1["time_vector"])
-    noise1 = signals.noise(config1, config1["main_rng"], e_t1)
+    e_t1 = signals.calculate_energy(p_t1, config1.time_vector)
+    noise1 = signals.noise(config1, config1.main_rng, e_t1)
 
     p_t2 = signals.sinus(config2)
-    e_t2 = signals.calculate_energy(p_t2, config2["time_vector"])
-    noise2 = signals.noise(config2, config2["main_rng"], e_t2)
+    e_t2 = signals.calculate_energy(p_t2, config2.time_vector)
+    noise2 = signals.noise(config2, config2.main_rng, e_t2)
 
     assert np.array_equal(noise1, noise2)
 
@@ -111,10 +111,10 @@ def test_shake_rng():
     configs = config.init_rng()
     
 
-    shake_configs1 = config.shake_rng(configs.copy())
-    shake_configs2 = config.shake_rng(configs.copy())
+    shake_configs1 = config.shake_rng(configs)
+    shake_configs2 = config.shake_rng(configs)
 
-    assert shake_configs1["main_seed"] != shake_configs2["main_seed"]
+    assert shake_configs1.main_seed != shake_configs2.main_seed
 
 
         
