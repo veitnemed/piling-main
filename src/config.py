@@ -12,7 +12,7 @@ def init_comon_params():
 
     GLOBAL_SEED = 1  # НАЧАЛЬНОЕ СОСТОЯНИЕ ГЕНЕРАТОРА СЛУЧАЙНЫХ ЧИСЕЛ
 
-    DURATION_ALL = (N - 1) * DT  # ДЛИТЕЛЬНОСТЬ ИМПУЛЬСА
+    DURATION_ALL = (N - 1) * DT  # ДЛИТЕЛЬНОСТЬ НА ВСЕЙ ОСИ ВРЕМЕНИ
     SPEED_ON_SOUND = 343.26  # СКОРОСТЬ ЗВУКА
 
 
