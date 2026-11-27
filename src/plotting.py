@@ -333,8 +333,7 @@ def create_and_save_table(rows: list, columns: list, filename: str, save: bool =
 
 def config_table(
     config_params: np.ndarray,
-    range_table: tuple | bool = None
-):
+    range_table: tuple  = (None, None)):
     """Таблица значений параметров графика"""
     from datetime import datetime
 
@@ -343,14 +342,11 @@ def config_table(
         return round(number, int(np.log10(1 / number)) + k)
 
     columns = ["Parameter", "Value"]
-    target_list = sorted(config_params.itemes()) 
-    if range_table is not None:
-        r1, r2 = range_table
-        target_list = sorted(config_params.itemes())[r1,r2]
+    r1, r2 = range_table
 
     rows = [
         [key, round_n(value, 2)]
-        for key, value in target_list
+        for key, value in sorted(config_params.items())[r1:r2] 
         if isinstance(value, (int, float, np.integer, np.floating))
         and not isinstance(value, (bool, np.bool_))
     ]
