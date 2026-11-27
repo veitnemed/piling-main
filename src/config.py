@@ -83,6 +83,7 @@ def create_parameters_config() -> dict:
     SDN_VALUES = comons["A"] / np.sqrt(np.array(SNR_VALUES))
     PHI_VALUES = np.linspace(0, 2 * np.pi, 18, endpoint=True)
     FREQ_VALUES = np.linspace(1, 100, 25)
+    DURATION_VALUES = np.linspace(0.01, 0.1, 20)
 
     return {
         "time_vector": TIME_VECTOR,
@@ -95,6 +96,7 @@ def create_parameters_config() -> dict:
         "sdn_values": SDN_VALUES,
         "phi_values": PHI_VALUES,
         "freq_values": FREQ_VALUES,
+        "duration_values": DURATION_VALUES,
         "main_rng": np.random.default_rng(comons["main_seed"]),
         **comons,
     }
